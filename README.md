@@ -69,6 +69,7 @@ mkdir build && cd build
 cmake .. -DBUILD_TESTING=ON
 cmake --build .
 ctest -V
+cmake --install . --prefix ..
 ```
 
 If you geet errors about missing developement libraries for curl and openssh, you can
