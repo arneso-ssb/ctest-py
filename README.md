@@ -61,6 +61,8 @@ please [file an issue] along with a detailed description.
 
 ## Developer
 
+### C-code
+
 Use the following commands to build, run and test the c-part of the library:
 
 ```shell
@@ -79,6 +81,16 @@ install them like this:
 sudo apt install libcurl4-openssl-dev
 sudo apt install libssl-dev
 ```
+
+### Python-code
+
+Build the complete library with the commands:
+
+```shell
+poetry install
+poetry run python -m build
+```
+
 
 ## Credits
 

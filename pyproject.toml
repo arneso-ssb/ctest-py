@@ -158,9 +158,6 @@ cmake.source-dir = "src"
 [tool.scikit-build.wheel]
 py-api = "py3"
 packages = ["ctest_py"]
-exclude = [
-    "ctest_py/_build_cffi.py",
-]
 
 [build-system]
 requires = [
