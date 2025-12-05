@@ -1,0 +1,25 @@
+{
+  "_commit": "9e3c49f6680d4c400567c39d70b768f0a322c95e",
+  "_copy_without_render": [
+    "*.rst_t"
+  ],
+  "_jinja2_env_vars": {
+    "lstrip_blocks": true,
+    "trim_blocks": true
+  },
+  "_template": "https://github.com/statisticsnorway/ssb-pypitemplate.git",
+  "author": "Arne S\u00f8rli",
+  "code_quality_level": "Medium",
+  "copyright_owner": "Arne S\u00f8rli",
+  "copyright_year": "2025",
+  "department_number": "",
+  "dependency_manager_tool": "poetry",
+  "development_status": "Development Status :: 4 - Beta",
+  "email": "arne.sorli@ssb.no",
+  "friendly_name": "CTest Py",
+  "github_organization": "arneso-ssb",
+  "license": "MIT",
+  "package_name": "ctest_py",
+  "project_name": "ctest-py",
+  "version": "0.0.0"
+}
