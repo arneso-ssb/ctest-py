@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.28)
 project(curlcrypto LANGUAGES C)
 
 # Testing is optional (enabled with -DBUILD_TESTING=ON)

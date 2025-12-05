@@ -45,6 +45,7 @@ typeguard = ">=2.13.3"
 xdoctest = { extras = ["colors"], version = ">=0.15.10" }
 myst-parser = { version = ">=0.16.1" }
 deptry = ">=0.23.0"
+build = ">=1.3.0"
 
 [tool.poetry.requires-plugins]
 poetry-plugin-export = ">=1.9"
@@ -147,25 +148,17 @@ classmethod-decorators = ["classmethod", "validator", "root_validator", "pydanti
 ]
 
 [tool.scikit-build]
-cmake-source-dir = "src"
+cmake.source-dir = "src"
 
 # After CMake installs the C library into src/ctest_py,
 # run CFFI compilation _inside the wheel build_
-wheel.py-api = "cp"
+# Note: build hooks are not supported via 'build-hooks' in this version.
+# Remove unsupported hooks to allow the package to build.
 
-# Run the cffi build script automatically
-[tool.scikit-build.build-hooks]
-# executed after cmake --install stage inside wheel build env
-post-install = [
-    "{python.executable} src/ctest_py/_build_cffi.py"
-]
-
-# Include cffi output in the final wheel
 [tool.scikit-build.wheel]
-include-package-data = true
-
-[tool.scikit-build.wheel.exclude]
-paths = [
+py-api = "py3"
+packages = ["ctest_py"]
+exclude = [
     "ctest_py/_build_cffi.py",
 ]
 
