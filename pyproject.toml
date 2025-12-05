@@ -9,6 +9,8 @@ requires-python = ">=3.10,<4.0"
 dynamic = ["classifiers"]
 dependencies = [
     "click>=8.0.1",
+    "cffi>=2.0.0",
+    "setuptools>=80.9.0",
 ]
 
 [project.urls]
@@ -144,6 +146,32 @@ classmethod-decorators = ["classmethod", "validator", "root_validator", "pydanti
     "S101",    # asserts are encouraged in pytest
 ]
 
+[tool.scikit-build]
+cmake-source-dir = "src"
+
+# After CMake installs the C library into src/ctest_py,
+# run CFFI compilation _inside the wheel build_
+wheel.py-api = "cp"
+
+# Run the cffi build script automatically
+[tool.scikit-build.build-hooks]
+# executed after cmake --install stage inside wheel build env
+post-install = [
+    "{python.executable} src/ctest_py/_build_cffi.py"
+]
+
+# Include cffi output in the final wheel
+[tool.scikit-build.wheel]
+include-package-data = true
+
+[tool.scikit-build.wheel.exclude]
+paths = [
+    "ctest_py/_build_cffi.py",
+]
+
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = [
+    "scikit-build-core>=0.11",
+    "cffi>=2.0",
+]
+build-backend = "scikit_build_core.build"
