@@ -1,9 +1,11 @@
 # Copilot Instructions for ctest-py
 
 ## Project Overview
-- **ctest-py** is a Python package providing command-line utilities and functions, with a focus on type safety, documentation, and robust developer workflows.
-- Main code is in `src/ctest_py/`. Entry point is `ctest_py.__main__:main` (see `pyproject.toml`).
+- **ctest-py** is a Python package providing command-line utilities and functions, with a focus on type safety, documentation, and robust developer workflows. It shows how to integrate with c code from python.
+- Main python code is in `src/ctest_py/`. Entry point is `ctest_py.__main__:main` (see `pyproject.toml`).
 - Uses [Click](https://click.palletsprojects.com/) for CLI, Google-style docstrings for documentation, and Sphinx for docs generation.
+- The c code is in `src/c/` and is built as a shared library that the python code interfaces with.
+- The c code is built using CMake.
 
 ## Key Workflows
 - **Build & Test:**
