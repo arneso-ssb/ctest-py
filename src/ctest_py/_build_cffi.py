@@ -24,12 +24,13 @@ libpath = os.path.join(base_dir, libname)
 
 ffi.set_source(
     "_curlcrypto",   # Name of generated Python extension
-    f"""
-    #include "curlcrypto.h"
+    """
+    // Provide forward declarations directly to avoid needing headers at build time
+    extern const char *get_curl_version(void);
+    extern const char *get_openssl_version(void);
     """,
     libraries=["curlcrypto"],
     library_dirs=[base_dir],
-    include_dirs=[os.path.join(base_dir, "..", "c", "include")],
 )
 
 if __name__ == "__main__":
