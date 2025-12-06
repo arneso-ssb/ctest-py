@@ -25,11 +25,16 @@ install(TARGETS curlcrypto
     RUNTIME DESTINATION ctest_py
 )
 
-# Also install the CFFI builder script so it can be invoked manually if needed
-install(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/ctest_py/_build_cffi.py
-    DESTINATION ctest_py
-)
+# Install all Python package sources into the wheel via CMake
+# This ensures the pure-Python files are present alongside the compiled artifacts
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ctest_py/
+        DESTINATION ctest_py
+        FILES_MATCHING
+          PATTERN "*.py"
+          PATTERN "py.typed"
+          # Exclude caches and any generated C source kept in the repo
+          PATTERN "__pycache__" EXCLUDE
+          PATTERN "_curlcrypto.c" EXCLUDE)
 
 # Generate the CFFI C source during the build (not during install)
 set(GENERATED_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated)

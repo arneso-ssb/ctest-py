@@ -150,13 +150,7 @@ classmethod-decorators = ["classmethod", "validator", "root_validator", "pydanti
 [tool.scikit-build]
 cmake.source-dir = "src"
 
-# After CMake installs the C library into src/ctest_py,
-# run CFFI compilation _inside the wheel build_
-# Note: build hooks are not supported via 'build-hooks' in this version.
-# Remove unsupported hooks to allow the package to build.
-
 [tool.scikit-build.wheel]
-py-api = "py3"
 packages = ["ctest_py"]
 
 [build-system]
