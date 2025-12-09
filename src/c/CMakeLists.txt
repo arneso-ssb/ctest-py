@@ -1,8 +1,19 @@
 find_package(CURL REQUIRED)
 find_package(OpenSSL REQUIRED)
+find_package(SQLite3)
 
 add_library(curlcrypto SHARED
     src/curlcrypto.c
+    src/bcvencrypt.c
+    src/bcvlog.c
+    src/bcvmodule.c
+    src/bcvutil.c
+    src/blockcachevfs.c
+#   src/blockcachevfsd.c
+    src/extension.c
+    src/simplexml.c
+    src/sqlite3.c
+#   src/tclsqlite.c
 )
 
 # Public include path (so other targets, e.g. Python extension or tests, can include this)
@@ -23,6 +34,7 @@ target_link_libraries(curlcrypto
         CURL::libcurl
         OpenSSL::SSL
         OpenSSL::Crypto
+#       SQLite::SQLite3
 )
 
 # Optional: Define a C test executable
