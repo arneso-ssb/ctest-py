@@ -1,36 +1,39 @@
-import sqlite3
+import ctypes
 import os
+import sqlite3
+import subprocess
+from functools import cache
+
 from google.auth import default
 from google.auth.credentials import Credentials
 from google.auth.transport.requests import Request
-import subprocess
 
-import ctypes
-from functools import cache
 
 class CloudSqlite:
-    def __init__(self, bucket: str, vfs_name = "ssb_vfs", cache_dir = "./cache", bucket_alias = "buckets") -> None:
-        """
-        Loads the extension into sqlite.
+    """Cloud version of SQLite with Google Cloud Storage integration."""
+
+    def __init__(
+        self,
+        bucket: str,
+        vfs_name: str = "ssb_vfs",
+        cache_dir: str = "./cache",
+        bucket_alias: str = "buckets",
+    ) -> None:
+        """Loads the extension into sqlite.
+
         Can connect to the database like this:
         >>> import sqlite3
         >>> sqlite3.connect(f"file:/{bucket_alias}/{database_name}?vfs={vfs_name}", uri=True)
-        
+
         Args:
-            bucket (str): Bucket path. ex: ssb-vare-tjen-korttid-data-produkt-prod/vhi/db
-            vfs_name (str): The vfs name used to access the extension
-            cache_dir (str): The path to the directory used for caching. Will create the directory if it does not exists
-            bucket_alias (str): The alias for the bucket.
-        
-        Returns:
-            None
-        
-        Raises:
-            sqlite3.OperationalError: If the exstension cannot be loaded.
+            bucket: Bucket path. ex: ssb-vare-tjen-korttid-data-produkt-prod/vhi/db
+            vfs_name: The vfs name used to access the extension
+            cache_dir: The path to the directory used for caching. Will create the directory if it does not exists
+            bucket_alias: The alias for the bucket.
         """
         access_token, project_id = CloudSqlite._get_creds()
 
-        if os.path.exists(cache_dir) == False:
+        if not os.path.exists(cache_dir):
             os.makedirs(cache_dir, exist_ok=True)
 
         os.environ["CS_KEY"] = access_token
@@ -59,20 +62,26 @@ class CloudSqlite:
         temp_conn.close()
 
     @staticmethod
-    def clean_blocks():
+    def clean_blocks() -> None:
+        """Cleans up memory blocks using a C extension.
+
+        Raises:
+            NotImplementedError: If the method is called, indicating that
+                further testing and implementation are required.
+        """
         # TODO fix this function. Unknown memory error
         raise NotImplementedError("This method needs more testing")
-            
+
         print("cleaning")
         lib_path = os.path.abspath(__file__)
-        lib = ctypes.CDLL( os.path.dirname(lib_path) + "/exstension.so")
+        lib = ctypes.CDLL(os.path.dirname(lib_path) + "/exstension.so")
         lib.clean.argtypes = []
         lib.clean.restype = ctypes.c_void_p
         lib.clean()
 
     @cache
     @staticmethod
-    def _get_creds():
+    def _get_creds() -> tuple[str, str]:
         # Get default credentials and project ID
         credentials, project_id = default()  # pyright: ignore
         credentials: Credentials
@@ -86,10 +95,21 @@ class CloudSqlite:
         return access_token, project_id
 
     @staticmethod
-    def _run_process(action, *args):
+    def _run_process(action: str, *args: str) -> None:
+        """Run the external blockcachevfsd helper with the specified action and arguments.
+
+        This function retrieves credentials via CloudSqlite._get_creds(), locates the
+        blockcachevfsd executable next to this module file, and invokes it using
+        subprocess.run(check=True). The command is constructed with the given action,
+        Google module settings, and the retrieved project/user and access token.
+
+        Args:
+            action: The operation to perform (e.g., "start", "stop", "status").
+            *args: Additional command-line arguments passed through to blockcachevfsd.
+        """
         access_token, project_id = CloudSqlite._get_creds()
         lib_path = os.path.abspath(__file__)
-        p = subprocess.run(
+        subprocess.run(
             [
                 os.path.dirname(lib_path) + "/blockcachevfsd",
                 action,
@@ -101,19 +121,30 @@ class CloudSqlite:
                 access_token,
                 *args,
             ],
-            check=True
+            check=True,
         )
 
     @staticmethod
-    def destroy_db(bucket_path: str):
+    def destroy_db(bucket_path: str) -> None:
+        """Destroy a database in cloud storage.
+
+        Args:
+            bucket_path: The path to the bucket in cloud storage.
+        """
         CloudSqlite._run_process(
             "destroy",
             bucket_path,
         )
 
     @staticmethod
-    def download_db(bucket_path: str):
-        """ex: ssb-*-data-produkt-prod/**/db"""
+    def download_db(bucket_path: str) -> None:
+        """Download database from cloud storage.
+
+        Args:
+            bucket_path: The path to the bucket in cloud storage.
+
+        ex: ssb-*-data-produkt-prod/**/db
+        """
         CloudSqlite._run_process(
             "download",
             "-container",
@@ -122,8 +153,15 @@ class CloudSqlite:
         )
 
     @staticmethod
-    def create_container(bucket_path: str, block_size="2048k"):
-        """ex: ssb-*-data-produkt-prod/**/db"""
+    def create_container(bucket_path: str, block_size: str = "2048k") -> None:
+        """Create a container in cloud storage.
+
+        Args:
+            bucket_path: The path to the bucket in cloud storage.
+            block_size: The block size to use.
+
+        ex: ssb-*-data-produkt-prod/**/db
+        """
         CloudSqlite._run_process(
             "create",
             "-blocksize",
@@ -132,11 +170,19 @@ class CloudSqlite:
         )
 
     @staticmethod
-    def create_local_db():
+    def create_local_db() -> None:
+        """Create a local SQLite database."""
         sqlite3.connect("example.db")
 
     @staticmethod
-    def upload_db(bucket_path: str, local_db: str, db_name: str):
+    def upload_db(bucket_path: str, local_db: str, db_name: str) -> None:
+        """Upload database to cloud storage.
+
+        Args:
+            bucket_path: The path to the bucket in cloud storage.
+            local_db: The path to the local database file.
+            db_name: The name of the database in cloud storage.
+        """
         CloudSqlite._run_process(
             "upload",
             "-container",
@@ -144,18 +190,26 @@ class CloudSqlite:
             local_db,
             db_name,
         )
+
     @staticmethod
-    def init_db(db_name: str, bucket_location: str, block_size="2048k"):
+    def init_db(db_name: str, bucket_location: str, block_size: str = "2048k") -> None:
+        """Initialize a new database and upload to cloud storage.
+
+        Args:
+            db_name: The name of the database file.
+            bucket_location: The location in cloud storage to upload the database.
+            block_size: The block size to use.
+        """
         conn = sqlite3.connect(db_name)
         conn.execute(
-                """
+            """
                 CREATE TABLE IF NOT EXISTS _ssb_sqlite_metadata (
                     creator VARCHAR,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
                 )"""
         )
         conn.execute(
-                """
+            """
                     INSERT INTO _ssb_sqlite_metadata (creator) VALUES (?);
                 """,
             (os.environ.get("DAPLA_USER"),),
@@ -164,18 +218,34 @@ class CloudSqlite:
         CloudSqlite.create_container(bucket_location, block_size)
         CloudSqlite.upload_db(bucket_location, db_name, db_name)
         os.remove(db_name)
-        
+
     @staticmethod
-    def list_files_db(bucket_path: str):
+    def list_files_db(bucket_path: str) -> None:
+        """List files stored in a CloudSqlite-backed bucket.
+
+        This helper delegates to `CloudSqlite._run_process("list", bucket_path)` to
+        enumerate files for the given bucket path. It is primarily intended for
+        diagnostic or administrative use.
+
+        Args:
+            bucket_path (str): The CloudSqlite bucket path or identifier whose files should be listed.
+        """
         CloudSqlite._run_process(
             "list",
             bucket_path,
         )
 
     @staticmethod
-    def list_manifest_db(bucket_path: str):
+    def list_manifest_db(bucket_path: str) -> None:
+        """List the manifest database for a given cloud bucket path.
+
+        This convenience wrapper delegates to CloudSqlite._run_process("manifest", bucket_path),
+        which executes the "manifest" process and streams its output.
+
+        Args:
+            bucket_path (str): Cloud storage bucket path or URI.
+        """
         CloudSqlite._run_process(
             "manifest",
             bucket_path,
         )
-

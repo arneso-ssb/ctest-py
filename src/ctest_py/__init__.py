@@ -1,8 +1,9 @@
-"""
-ctest_py - Python bindings for the curlcrypto C library using CFFI.
-"""
+"""ctest_py - Python bindings for the curlcrypto C library using CFFI."""
 
-from ._curlcrypto import ffi, lib
+from cffi.api import CData
+
+from ._curlcrypto import ffi
+from ._curlcrypto import lib
 
 __all__ = [
     "curl_version",
@@ -10,7 +11,7 @@ __all__ = [
 ]
 
 
-def _decode(result) -> str:
+def _decode(result: CData) -> str:
     """Convert a char* from C into a Python str safely."""
     if result == ffi.NULL:
         return ""
@@ -25,4 +26,3 @@ def curl_version() -> str:
 def openssl_version() -> str:
     """Returns: The version string from OpenSSL."""
     return _decode(lib.get_openssl_version())
-

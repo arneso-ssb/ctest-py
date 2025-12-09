@@ -3,7 +3,7 @@
 **
 ******************************************************************************
 **
-** This file contains declarations for the public interface to code in 
+** This file contains declarations for the public interface to code in
 ** bcvutil.c. This API allows applications to upload, download, duplicate and
 ** delete CBS cloud storage databases. It is also possible to create
 ** or destroy CBS manifests and cloud storage containers/buckets.
@@ -37,7 +37,7 @@
 ** to obtain an English language error message.
 **
 ** Calls that return an integer error code may return either a non-extended
-** SQLite error code (rc < 400) or an HTTP error code (rc >= 400) if an 
+** SQLite error code (rc < 400) or an HTTP error code (rc >= 400) if an
 ** HTTP error occurs.
 */
 
@@ -51,7 +51,7 @@ extern "C" {
 typedef struct sqlite3_bcv sqlite3_bcv;
 
 /*
-** Allocate a new sqlite3_bcv handle. 
+** Allocate a new sqlite3_bcv handle.
 **
 ** The first argument is passed the name of the module to use. This may
 ** be either a simple module name (e.g. "google") or a module name with
@@ -60,7 +60,7 @@ typedef struct sqlite3_bcv sqlite3_bcv;
 ** The second parameter is passed the user or account name that will be
 ** used to access the cloud storage container. The third parameter, zAuth,
 ** must be passed a nul-terminated string containing the authentication
-** information to use when accessing the remote resource. Refer to 
+** information to use when accessing the remote resource. Refer to
 ** documentation for the specific cloud storage module in use for exactly
 ** how this value, and the user name value, are used.
 **
@@ -93,11 +93,11 @@ int sqlite3_bcv_config(sqlite3_bcv*, int eOp, ...);
 ** SQLITE_BCVCONFIG_VERBOSE:
 **   A single trailing int is required by this configuration option. If
 **   non-zero, the handle is configured to use CURLOPT_VERBOSE with all
-**   http/https requests. If zero, it is configured to not use 
+**   http/https requests. If zero, it is configured to not use
 **   CURLOPT_VERBOSE. The default is not to use CURLOPT_VERBOSE.
 **
 ** SQLITE_BCVCONFIG_PROGRESS:
-**   Configure a callback to be issued after each block is 
+**   Configure a callback to be issued after each block is
 **   uploaded/downloaded within sqlite3_bcv_upload()/download() API calls.
 **   This configuration option requires two trailing arguments, a (void*)
 **   and a function with the following signature:
@@ -110,8 +110,8 @@ int sqlite3_bcv_config(sqlite3_bcv*, int eOp, ...);
 **   by the current call so far, and the total number of bytes that will
 **   be uploaded, assuming the call is successful, before returning.
 **   For a sqlite3_bcv_download() call, the callback is invoked after each
-**   block has been downloaded. The three arguments are similar to those 
-**   for _upload() - a copy of the (void*), the number of bytes downloaded 
+**   block has been downloaded. The three arguments are similar to those
+**   for _upload() - a copy of the (void*), the number of bytes downloaded
 **   so far, and the total bytes that will be downloaded.
 **
 **   If the progress callback returns 0, the operation continues. If it
@@ -128,7 +128,7 @@ int sqlite3_bcv_config(sqlite3_bcv*, int eOp, ...);
 **   blocks deleted, and nTotal to the total number that will be deleted by
 **   the sqlite3_bcv_cleanup() call.
 **
-**   From within an sqlite3_bcv_cleanup() call, if the progress callback 
+**   From within an sqlite3_bcv_cleanup() call, if the progress callback
 **   returns other than SQLITE_OK, then the operation is halted immediately.
 **   If the return value is SQLITE_DONE and one or more blocks have already
 **   been deleted, then a new manifest file is uploaded and SQLITE_OK returned.
@@ -142,9 +142,9 @@ int sqlite3_bcv_config(sqlite3_bcv*, int eOp, ...);
 **
 **     void xLog(void *pCtx, const char*);
 **
-**   Each time the callback is invoked, a copy of the first trailing 
+**   Each time the callback is invoked, a copy of the first trailing
 **   argument passed to the sqlite3_bcv_config() call is passed as its
-**   first parameter. The second parameter points to a nul-terminated 
+**   first parameter. The second parameter points to a nul-terminated
 **   string containing a human-readable message suitable for outputing
 **   to a log file.
 **
@@ -170,10 +170,10 @@ int sqlite3_bcv_config(sqlite3_bcv*, int eOp, ...);
 **   This option requires a single argument of type int, interpreted
 **   as a Boolean. If set to true (the default), then any call to
 **   sqlite3_bcv_cleanup() using the handle will search the cloud storage
-**   container for orphaned blocks before deleting blocks already scheduled 
+**   container for orphaned blocks before deleting blocks already scheduled
 **   for deletion. Orphaned blocks are created when a client abruptly halts,
 **   is disconnected or encounters an error while uploading a change.
-**   
+**
 */
 #define SQLITE_BCVCONFIG_VERBOSE     1      /* (int) */
 #define SQLITE_BCVCONFIG_PROGRESS    2      /* (void*,xProgress) */
@@ -206,18 +206,18 @@ int sqlite3_bcv_errcode(sqlite3_bcv*);
 const char *sqlite3_bcv_errmsg(sqlite3_bcv *p);
 
 /*
-** Upload a database to the cloud storage container. Argument zLocal 
+** Upload a database to the cloud storage container. Argument zLocal
 ** identifies the database to upload from the local file-system. Argument
 ** zRemote is the name the database will take within cloud storage.
 **
 ** If the operation is successful, SQLITE_OK is returned. Or, if
-** an HTTPS request made to the cloud storage system fails, an HTTP 
-** response code is returned. Or, if some other error occurs (for example, 
-** a failed memory allocation), a non-extended SQLite error code is 
+** an HTTPS request made to the cloud storage system fails, an HTTP
+** response code is returned. Or, if some other error occurs (for example,
+** a failed memory allocation), a non-extended SQLite error code is
 ** returned. All HTTP response codes that may be returned are greater
 ** than or equal to 400. All non-extended SQLite error codes are positive
 ** integers smaller than 256.
-*/ 
+*/
 int sqlite3_bcv_upload(
   sqlite3_bcv *p,
   const char *zLocal,
@@ -230,9 +230,9 @@ int sqlite3_bcv_upload(
 ** local path at which the downloaded databse will be written.
 **
 ** If the operation is successful, SQLITE_OK is returned. Or, if
-** an HTTPS request made to the cloud storage system fails, an HTTP 
-** response code is returned. Or, if some other error occurs (for example, 
-** a failed memory allocation), a non-extended SQLite error code is 
+** an HTTPS request made to the cloud storage system fails, an HTTP
+** response code is returned. Or, if some other error occurs (for example,
+** a failed memory allocation), a non-extended SQLite error code is
 ** returned. All HTTP response codes that may be returned are greater
 ** than or equal to 400. All non-extended SQLite error codes are positive
 ** integers smaller than 256.
@@ -247,9 +247,9 @@ int sqlite3_bcv_download(
 ** Create a copy of an existing cloud storage database within its container.
 **
 ** If the operation is successful, SQLITE_OK is returned. Or, if
-** an HTTPS request made to the cloud storage system fails, an HTTP 
-** response code is returned. Or, if some other error occurs (for example, 
-** a failed memory allocation), a non-extended SQLite error code is 
+** an HTTPS request made to the cloud storage system fails, an HTTP
+** response code is returned. Or, if some other error occurs (for example,
+** a failed memory allocation), a non-extended SQLite error code is
 ** returned. All HTTP response codes that may be returned are greater
 ** than or equal to 400. All non-extended SQLite error codes are positive
 ** integers smaller than 256.
@@ -264,9 +264,9 @@ int sqlite3_bcv_copy(
 ** Delete a database from cloud storage.
 **
 ** If the operation is successful, SQLITE_OK is returned. Or, if
-** an HTTPS request made to the cloud storage system fails, an HTTP 
-** response code is returned. Or, if some other error occurs (for example, 
-** a failed memory allocation), a non-extended SQLite error code is 
+** an HTTPS request made to the cloud storage system fails, an HTTP
+** response code is returned. Or, if some other error occurs (for example,
+** a failed memory allocation), a non-extended SQLite error code is
 ** returned. All HTTP response codes that may be returned are greater
 ** than or equal to 400. All non-extended SQLite error codes are positive
 ** integers smaller than 256.
@@ -282,9 +282,9 @@ int sqlite3_bcv_delete(
 ** simply clobbered.
 **
 ** If the operation is successful, SQLITE_OK is returned. Or, if
-** an HTTPS request made to the cloud storage system fails, an HTTP 
-** response code is returned. Or, if some other error occurs (for example, 
-** a failed memory allocation), a non-extended SQLite error code is 
+** an HTTPS request made to the cloud storage system fails, an HTTP
+** response code is returned. Or, if some other error occurs (for example,
+** a failed memory allocation), a non-extended SQLite error code is
 ** returned. All HTTP response codes that may be returned are greater
 ** than or equal to 400. All non-extended SQLite error codes are positive
 ** integers smaller than 256.
@@ -295,9 +295,9 @@ int sqlite3_bcv_create(sqlite3_bcv *p, int szName, int szBlock);
 ** Delete the entire cloud storage container or bucket.
 **
 ** If the operation is successful, SQLITE_OK is returned. Or, if
-** an HTTPS request made to the cloud storage system fails, an HTTP 
-** response code is returned. Or, if some other error occurs (for example, 
-** a failed memory allocation), a non-extended SQLite error code is 
+** an HTTPS request made to the cloud storage system fails, an HTTP
+** response code is returned. Or, if some other error occurs (for example,
+** a failed memory allocation), a non-extended SQLite error code is
 ** returned. All HTTP response codes that may be returned are greater
 ** than or equal to 400. All non-extended SQLite error codes are positive
 ** integers smaller than 256.
@@ -307,10 +307,10 @@ int sqlite3_bcv_destroy(sqlite3_bcv *p);
 /*
 ** When a remote database is written, a subset of its blocks are replaced
 ** by new versions, sometimes leaving the originals unused by any database.
-** In this case, they are not deleted immediately. Instead, they are 
-** marked as unused, ready for deletion at some later time. Calling this 
+** In this case, they are not deleted immediately. Instead, they are
+** marked as unused, ready for deletion at some later time. Calling this
 ** routine deletes all blocks in the named remote container that were
-** marked as unused nSecond seconds or more ago. Calling this routine with 
+** marked as unused nSecond seconds or more ago. Calling this routine with
 ** the nSecond parameter set to 0 or less deletes all unused blocks.
 **
 ** If the cloud storage container is being written simultaneously by some
@@ -318,9 +318,9 @@ int sqlite3_bcv_destroy(sqlite3_bcv *p);
 ** error 412 (pre-condition failed).
 **
 ** If the operation is successful, SQLITE_OK is returned. Or, if
-** an HTTPS request made to the cloud storage system fails, an HTTP 
-** response code is returned. Or, if some other error occurs (for example, 
-** a failed memory allocation), a non-extended SQLite error code is 
+** an HTTPS request made to the cloud storage system fails, an HTTP
+** response code is returned. Or, if some other error occurs (for example,
+** a failed memory allocation), a non-extended SQLite error code is
 ** returned. All HTTP response codes that may be returned are greater
 ** than or equal to 400. All non-extended SQLite error codes are positive
 ** integers smaller than 256.
@@ -331,4 +331,3 @@ int sqlite3_bcv_cleanup(sqlite3_bcv *p, int nSecond);
 } /* end of the extern "C" block */
 #endif
 #endif /* ifndef _BCVUTIL_H */
-

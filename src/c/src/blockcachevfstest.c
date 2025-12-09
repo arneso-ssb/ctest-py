@@ -130,9 +130,9 @@ struct ScContext {
 static struct ScContext g_bcv_sc;
 
 static int test_sas_callback(
-  void *pCtx, 
-  const char *zStorage, 
-  const char *zAccount, 
+  void *pCtx,
+  const char *zStorage,
+  const char *zAccount,
   const char *zContainer,
   char **pzSasToken,
   int *pbReadonly
@@ -204,7 +204,7 @@ static const char *testGetString(Tcl_Obj *pObj){
 #endif
 
 /*
-** sqlite3_bcv_attach ?OPTIONS? DIR MODULE USER CONTAINER AUTH ALIAS 
+** sqlite3_bcv_attach ?OPTIONS? DIR MODULE USER CONTAINER AUTH ALIAS
 */
 static int test_bcv_attach(
   ClientData clientData,
@@ -246,7 +246,7 @@ static int test_bcv_attach(
   }
 
   if( objc-i!=7 ){
-    const char *zHelp = "?SWITCHES? DIR MODULE USER CONTAINER AUTH ALIAS"; 
+    const char *zHelp = "?SWITCHES? DIR MODULE USER CONTAINER AUTH ALIAS";
     Tcl_WrongNumArgs(interp, 1, objv, zHelp);
     return TCL_ERROR;
   }
@@ -347,15 +347,15 @@ static void test_bcv_log(
 }
 
 static int test_bcv_progress(
-  void *pCtx, 
-  sqlite3_int64 nDone, 
+  void *pCtx,
+  sqlite3_int64 nDone,
   sqlite3_int64 nTotal
 ){
   TestBcv *p = (TestBcv*)pCtx;
   Tcl_Obj *pEval;
   int rc;
   Tcl_Obj *pRes;
-  
+
   pEval = Tcl_DuplicateObj(p->pProgress);
   Tcl_IncrRefCount(pEval);
   if( Tcl_ListObjAppendElement(p->interp, pEval, Tcl_NewWideIntObj(nDone))
@@ -388,7 +388,7 @@ static int test_bcv_cmd(
     const char *zCmd;
     int nArg;
     const char *zHelp;
-  } aCmd[] = { 
+  } aCmd[] = {
     { "close",    0, "" },                  /* 0 */
     { "copy",     2, "FROM TO" },           /* 1 */
     { "config",   2, "OPTION VALUE" },      /* 2 */
@@ -432,7 +432,7 @@ static int test_bcv_cmd(
       break;
     };
     case 2: {      /* config */
-      const char *azOpt[] = { 
+      const char *azOpt[] = {
         "verbose",      /* 0 */
         "progress",     /* 1 */
         "log",          /* 2 */
@@ -441,7 +441,7 @@ static int test_bcv_cmd(
         "testnokv",     /* 5 */
         "httptimeout",  /* 6 */
         "find_orphans", /* 7 */
-        0 
+        0
       };
       int iOpt = 0;
       rc = Tcl_GetIndexFromObj(interp, objv[2], azOpt, "option", 0, &iOpt);
@@ -909,7 +909,7 @@ static void bcvfsLogCb(void *pCtx, int mask, const char *zMsg){
 }
 
 static int bcvfsAuthCb(
-  void *pCtx, 
+  void *pCtx,
   const char *zStorage,
   const char *zAccount,
   const char *zContainer,
@@ -945,7 +945,7 @@ struct BusyHandlerArg {
   Tcl_Obj *pEval;
   Tcl_Interp *interp;
 };
-  
+
 static int test_busy_handler(void *pArg, int nPrev){
   BusyHandlerArg *p = (BusyHandlerArg*)pArg;
   Tcl_Obj *pEval = Tcl_DuplicateObj(p->pEval);
@@ -978,7 +978,7 @@ static int prefetchCmd(
     const char *zCmd;
     int nArg;
     const char *zHelp;
-  } aCmd[] = { 
+  } aCmd[] = {
     { "run",      2, "NREQUEST MS" },       /* 0 */
     { "status",   1, "NAME" },              /* 1 */
     { "errmsg",   0, "" },                  /* 2 */
@@ -1075,7 +1075,7 @@ static void prefetchDel(ClientData clientData){
 
 /*
 ** $vfs attach ?OPTIONS? STORAGE ACCOUNT CONTAINER
-** 
+**
 **   where OPTIONS are:
 **
 **     -auth  AUTHSTRING
@@ -1111,7 +1111,7 @@ static int bcvfsCommand(
     "delete",           /* 10 */
     "prefetch_new",     /* 11 */
     "revert",           /* 12 */
-    0,                             
+    0,
   };
   TestBcvfs *pTest = (TestBcvfs*)clientData;
   int iCmd;
@@ -1146,7 +1146,7 @@ static int bcvfsCommand(
         i64 iVal = 0;
 
         int rc = Tcl_GetIndexFromObjStruct(
-            interp, objv[2], (void*)aOpt, sizeof(aOpt[0]), "OPTION", 0, &iOpt 
+            interp, objv[2], (void*)aOpt, sizeof(aOpt[0]), "OPTION", 0, &iOpt
         );
         if( rc ) return TCL_ERROR;
         if( Tcl_GetWideIntFromObj(interp, objv[3], &iVal) ) return TCL_ERROR;
@@ -1205,7 +1205,7 @@ static int bcvfsCommand(
         for(ii=0; ii<nElem; ii++){
           int iBit = 0;
           int rc = Tcl_GetIndexFromObjStruct(
-              interp, aElem[ii], (void*)aBit, sizeof(aBit[0]), "BIT", 0, &iBit 
+              interp, aElem[ii], (void*)aBit, sizeof(aBit[0]), "BIT", 0, &iBit
           );
           if( rc ) return TCL_ERROR;
           mLog |= aBit[iBit].mask;
@@ -1320,7 +1320,7 @@ static int bcvfsCommand(
       break;
     }
     case 6: assert( !strcmp("poll", azSub[iCmd]) ); {
-      if( (objc!=3 && objc!=4) 
+      if( (objc!=3 && objc!=4)
        || (objc==4 && sqlite3_stricmp("-noerr", Tcl_GetString(objv[2])))
       ){
         Tcl_WrongNumArgs(interp, 2, objv, "?-noerr? CONTAINER");
@@ -1368,7 +1368,7 @@ static int bcvfsCommand(
           assert( iOpt==1 );
           if( ii==objc-2 ){
             Tcl_ResetResult(interp);
-            Tcl_AppendResult(interp, "option requires an argument: ", 
+            Tcl_AppendResult(interp, "option requires an argument: ",
                 Tcl_GetString(objv[ii]), (char*)0
             );
             return TCL_ERROR;
@@ -1384,7 +1384,7 @@ static int bcvfsCommand(
 
       bh.pEval = pBusy;
       bh.interp = interp;
-      rc = sqlite3_bcvfs_upload(pTest->pFs, zContainer, 
+      rc = sqlite3_bcvfs_upload(pTest->pFs, zContainer,
           (pBusy ? test_busy_handler : 0), (void*)&bh, pzErr
       );
 
@@ -1551,7 +1551,7 @@ static int test_bcvfs_create(
   pTest->pFs = pNew;
 
   pCmd = Tcl_ObjPrintf("bcvfs_%s", zVfsname);
-  Tcl_CreateObjCommand(interp, 
+  Tcl_CreateObjCommand(interp,
       Tcl_GetString(pCmd), bcvfsCommand, (void*)pTest, bcvfsDestroy
   );
   Tcl_SetObjResult(interp, pCmd);
@@ -1612,7 +1612,7 @@ static int bcvTfsVtabConnect(
 
 /*
 ** Decrement the ref-count for the list object passed as the only argument.
-** If this means there are now no references to the object, free it. 
+** If this means there are now no references to the object, free it.
 */
 static void bcvTfsListUnref(BcvTfsList *pList){
   if( pList ){
@@ -1700,7 +1700,7 @@ int bcvfsGetBcv(sqlite3*, BcvDispatch**, BcvContainer**);
 void bcvfsReleaseBcv(sqlite3*, BcvDispatch*, BcvContainer*, int);
 
 static int bcvTfsVtabFilter(
-  sqlite3_vtab_cursor *cur, 
+  sqlite3_vtab_cursor *cur,
   int idxNum, const char *idxStr,
   int argc, sqlite3_value **argv
 ){
@@ -1751,8 +1751,8 @@ static int bcvTfsVtabEof(sqlite3_vtab_cursor *cur){
 }
 
 static void bcvTfsFetchCb(
-  void *pCtx, 
-  int rc, char *zETag, 
+  void *pCtx,
+  int rc, char *zETag,
   const u8 *aData, int nData,
   const u8 *aHdrs, int nHdrs
 ){
@@ -1813,13 +1813,13 @@ static void bcvTfsUpdateCb(void *pCtx, int rc, char *zETag){
 }
 
 
-/* 
-** This function is the implementation of the xUpdate callback used by 
-** bcv_tfs virtual tables. It is invoked by SQLite each time a row is 
+/*
+** This function is the implementation of the xUpdate callback used by
+** bcv_tfs virtual tables. It is invoked by SQLite each time a row is
 ** to be inserted, updated or deleted.
 **
 ** A delete specifies a single argument - the rowid of the row to remove.
-** 
+**
 ** Update and insert operations pass:
 **
 **   1. The "old" rowid, or NULL.
@@ -1830,7 +1830,7 @@ static void bcvTfsUpdateCb(void *pCtx, int rc, char *zETag){
 static int bcvTfsVtabUpdate(
   sqlite3_vtab *tab,
   int nVal,
-  sqlite3_value **apVal, 
+  sqlite3_value **apVal,
   sqlite3_int64 *piRowid
 ){
   bcv_tfs_vtab *pTab = (bcv_tfs_vtab*)tab;
@@ -1845,7 +1845,7 @@ static int bcvTfsVtabUpdate(
     if( rc==SQLITE_OK && sqlite3_value_type(apVal[0])==SQLITE_INTEGER ){
       i64 iRow = sqlite3_value_int64(apVal[0]);
 
-      bcvDispatchDelete(pDisp, pBcv, 
+      bcvDispatchDelete(pDisp, pBcv,
           pTab->pList->azFile[iRow], 0, &fu, bcvTfsUpdateCb
       );
       if( rc==SQLITE_OK ){
@@ -2059,9 +2059,9 @@ static int bcvTestClose(sqlite3_file *pFile){
   return rc;
 }
 static int bcvTestRead(
-  sqlite3_file *pFile, 
-  void *pBuf, 
-  int iAmt, 
+  sqlite3_file *pFile,
+  void *pBuf,
+  int iAmt,
   sqlite3_int64 iOfst
 ){
   BcvTestFile *p = (BcvTestFile*)pFile;
@@ -2071,9 +2071,9 @@ static int bcvTestRead(
   return p->pReal->pMethods->xRead(p->pReal, pBuf, iAmt, iOfst);
 }
 static int bcvTestWrite(
-  sqlite3_file *pFile, 
-  const void *pBuf, 
-  int iAmt, 
+  sqlite3_file *pFile,
+  const void *pBuf,
+  int iAmt,
   sqlite3_int64 iOfst
 ){
   BcvTestFile *p = (BcvTestFile*)pFile;
@@ -2116,10 +2116,10 @@ static int bcvTestDeviceCharacteristics(sqlite3_file *pFile){
   return p->pReal->pMethods->xDeviceCharacteristics(p->pReal);
 }
 static int bcvTestShmMap(
-  sqlite3_file *pFile, 
-  int iPg, 
-  int pgsz, 
-  int flags, 
+  sqlite3_file *pFile,
+  int iPg,
+  int pgsz,
+  int flags,
   void volatile **pp
 ){
   BcvTestFile *p = (BcvTestFile*)pFile;
@@ -2138,9 +2138,9 @@ static int bcvTestShmUnmap(sqlite3_file *pFile, int deleteFlag){
   return p->pReal->pMethods->xShmUnmap(p->pReal, deleteFlag);
 }
 static int bcvTestFetch(
-  sqlite3_file *pFile, 
-  sqlite3_int64 iOfst, 
-  int iAmt, 
+  sqlite3_file *pFile,
+  sqlite3_int64 iOfst,
+  int iAmt,
   void **pp
 ){
   BcvTestFile *p = (BcvTestFile*)pFile;
@@ -2156,9 +2156,9 @@ static int bcvTestUnfetch(sqlite3_file *pFile, sqlite3_int64 iOfst, void *pPg){
 ** VFS methods.
 */
 static int bcvTestOpen(
-  sqlite3_vfs *pVfs, 
-  const char *zName, 
-  sqlite3_file *pFile, 
+  sqlite3_vfs *pVfs,
+  const char *zName,
+  sqlite3_file *pFile,
   int flags, int *pFlags
 ){
   static sqlite3_io_methods bcv_test_methods = {
@@ -2202,18 +2202,18 @@ static int bcvTestDelete(sqlite3_vfs *pVfs, const char *zName, int syncDir){
   return pVfs2->xDelete(pVfs2, zName, syncDir);
 }
 static int bcvTestAccess(
-  sqlite3_vfs *pVfs, 
-  const char *zName, 
-  int flags, 
+  sqlite3_vfs *pVfs,
+  const char *zName,
+  int flags,
   int *pResOut
 ){
   sqlite3_vfs *pVfs2 = (sqlite3_vfs*)pVfs->pAppData;
   return pVfs2->xAccess(pVfs2, zName, flags, pResOut);
 }
 static int bcvTestFullPathname(
-  sqlite3_vfs *pVfs, 
-  const char *zName, 
-  int nOut, 
+  sqlite3_vfs *pVfs,
+  const char *zName,
+  int nOut,
   char *zOut
 ){
   sqlite3_vfs *pVfs2 = (sqlite3_vfs*)pVfs->pAppData;
@@ -2397,7 +2397,7 @@ const char *bcvtest_init(Tcl_Interp *interp){
   );
 
   /* Install wrappers around send() and recv() */
-  sqlite3_bcv_test_socket_api(bcvTestRecv, bcvTestSend, &g.xRecv, &g.xSend); 
+  sqlite3_bcv_test_socket_api(bcvTestRecv, bcvTestSend, &g.xRecv, &g.xSend);
 
   /* Install Tcl commands */
   for(i=0; i<sizeof(aCmd)/sizeof(aCmd[0]); i++){
@@ -2406,4 +2406,3 @@ const char *bcvtest_init(Tcl_Interp *interp){
 
   return 0;
 }
-

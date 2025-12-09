@@ -39,7 +39,7 @@
 **
 **   If the specified directory does not have a running CBS daemon, but was
 **   used previously, then the new VFS object is initialized based on the state
-**   of the directory - meaning that all containers that were attached when 
+**   of the directory - meaning that all containers that were attached when
 **   the previous VFS was shutdown are automatically reattached.
 **
 **   As well as creating a VFS object that may be used by database clients,
@@ -64,7 +64,7 @@
 **
 **   Almost all applications will need to configure the VFS object with
 **   an authentication callback using sqlite3_bcvfs_auth_callback(). This
-**   callback is the only way the authentication data (e.g. an Azure SAS 
+**   callback is the only way the authentication data (e.g. an Azure SAS
 **   string or Google Cloud access token) may be provided to cloud storage
 **   modules that require it.
 **
@@ -102,7 +102,7 @@
 **
 **   For example, with all error handling omitted, to create a new VFS
 **   that uses directory "dirname" to store its files, then to use it
-**   to access database "mydb.db" in container "mycont" belonging to 
+**   to access database "mydb.db" in container "mycont" belonging to
 **   Azure user "myuser":
 **
 **     sqlite3_bcvfs *pFs;
@@ -121,7 +121,7 @@
 ** Poll and Upload operations:
 **
 **   The sqlite3_bcvfs_poll() and sqlite3_bcvfs_upload() and
-**   APIs are used to perform "poll" and "upload" operations on a specified 
+**   APIs are used to perform "poll" and "upload" operations on a specified
 **   attached container. Also available are the "PRAGMA bcv_poll"
 **   and "PRAGMA bcv_upload" SQL commands.
 **
@@ -140,26 +140,26 @@
 **   databases that are part of the specified container.
 **
 **   When databases modifications are uploaded, or databases are deleted
-**   from cloud storage containers altogether, old, unused blocks are left 
-**   in cloud storage. The system allows these blocks to linger in case 
+**   from cloud storage containers altogether, old, unused blocks are left
+**   in cloud storage. The system allows these blocks to linger in case
 **   other clients are still using them instead of deleting them immediately.
 **   To actually delete old, unused, blocks from cloud storage, see the
 **   sqlite3_bcv_cleanup() API (in bcvutil.h).
 **
 ** VIRTUAL TABLE INTERFACE
 **
-**   The sqlite3_bcvfs_register_vtab() API is used to register four read-only 
+**   The sqlite3_bcvfs_register_vtab() API is used to register four read-only
 **   eponymous virtual tables, "bcv_database", "bcv_container", "bcv_block",
 **   and "bcv_http_log", and one read-write table, "bcv_kv". If the main
 **   database of the database handle that these are registered with is open on
-**   a CBS database, the four read-only tables provide information regarding 
-**   the current state of the VFS object. The "bcv_kv" table provides 
-**   read-write access to a key-value store stored in the cloud container 
-**   that may be useful for advisory locks or other communication between 
+**   a CBS database, the four read-only tables provide information regarding
+**   the current state of the VFS object. The "bcv_kv" table provides
+**   read-write access to a key-value store stored in the cloud container
+**   that may be useful for advisory locks or other communication between
 **   remote database clients.
 **
 **   The four read-only virtual tables are available to both daemon and
-**   daemonless mode VFS clients, but bcv_kv is only available in daemonless 
+**   daemonless mode VFS clients, but bcv_kv is only available in daemonless
 **   mode.
 **
 ** The bcv_container table:
@@ -168,15 +168,15 @@
 **   to the VFS. It has the equivalent of the following schema:
 **
 **     CREATE TABLE bcv_container(
-**       name      TEXT,          -- local name (alias) of container 
+**       name      TEXT,          -- local name (alias) of container
 **       storage   TEXT,          -- cloud storage system (e.g. "azure")
 **       user      TEXT,          -- cloud storage username
 **       container TEXT,          -- container name in cloud storage
 **       ncleanup  INTEGER        -- number of blocks eligible for cleanup
 **     )
 **
-**   The "ncleanup" column usually contains the number of blocks that will 
-**   be deleted from cloud storage if a cleanup operation (see the 
+**   The "ncleanup" column usually contains the number of blocks that will
+**   be deleted from cloud storage if a cleanup operation (see the
 **   sqlite3_bcv_cleanup() API)is run on the container. However, if
 **   errors or client crashes have occurred while uploading changes to
 **   cloud storage, then there may be extra unused blocks left in the
@@ -201,18 +201,18 @@
 **
 **   The "state" column usually contains an empty string. There are two
 **   exceptions:
-** 
+**
 **      * If the database has been created using sqlite3_bcvfs_copy() but
 **        not yet uploaded, then this column contains the text 'copied'.
 **
 **      * If the database has been deleted using sqlite3_bcvfs_delete() but
-**        the delete operation has not yet uploaded, then this column contains 
+**        the delete operation has not yet uploaded, then this column contains
 **        the text 'deleted'.
 **
 ** The bcv_block table:
 **
-**   The "bcv_block" table contains one row for each block in each database 
-**   in each attached container. It has the equivalent of the following 
+**   The "bcv_block" table contains one row for each block in each database
+**   in each attached container. It has the equivalent of the following
 **   schema:
 **
 **     CREATE TABLE bcv_block(
@@ -222,7 +222,7 @@
 **       blockid   BLOB,          -- block id (or NULL)
 **       cache     BOOLEAN,       -- true if block is in cache
 **       dirty     BOOLEAN        -- true if block is dirty
-**     ) 
+**     )
 **
 **   The first three columns, "container", "database" and "blockno", identify
 **   a block within a specific database. Blocks are numbered starting from
@@ -249,21 +249,21 @@
 **       logmsg TEXT,             -- Log message associated with request
 **       uri TEXT,                -- URI of request
 **       httpcode INTEGER         -- HTTP response code (e.g. 200)
-**     ) 
+**     )
 **
 **   For those requests that can be associated with a single SQLite database
 **   handle, the contents of the "client" column is the client name as
 **   configured using the "PRAGMA bcv_client" command. For requests associated
 **   with a prefetch operation, it contains the string 'prefetch'.
 **
-**   To prevent it from consuming an ever-increasing amount of memory, entries 
+**   To prevent it from consuming an ever-increasing amount of memory, entries
 **   are automatically removed from the bcv_http_log on a first-in/first-out
-**   according to the values configured for the SQLITE_BCV_HTTPLOG_TIMEOUT 
+**   according to the values configured for the SQLITE_BCV_HTTPLOG_TIMEOUT
 **   and SQLITE_BCV_HTTPLOG_NENTRY parameters. Or, in daemon mode, according
-**   to the values passed via the --httplogtimeout and --httplognentry 
+**   to the values passed via the --httplogtimeout and --httplognentry
 **   command-line options.
 **
-**   Including various overheads, each entry may be assumed to consume 
+**   Including various overheads, each entry may be assumed to consume
 **   256 bytes of memory or less. So allowing 4096 entries to accumulate in
 **   the bcv_http_log table may require up to 1MiB of memory.
 **
@@ -272,7 +272,7 @@
 **   The schema of the "bcv_kv" table is:
 **
 **     CREATE TABLE bcv_kv(
-**       name TEXT PRIMARY KEY,   -- Key value 
+**       name TEXT PRIMARY KEY,   -- Key value
 **       value                    -- Associated payload value
 **     )
 **
@@ -282,11 +282,11 @@
 **
 **   The bcv_kv table implements transaction-like properties. As follows:
 **
-**     * The first time in a database transaction that the bcv_kv table 
+**     * The first time in a database transaction that the bcv_kv table
 **       is read or written, the file is downloaded from cloud storage and
 **       cached for the duration of the transaction. All user queries -
-**       read and write - are executed against this cached version of the 
-**       bcv_kv table. This ensures that each transaction sees a consistent 
+**       read and write - are executed against this cached version of the
+**       bcv_kv table. This ensures that each transaction sees a consistent
 **       version of the table contents.
 **
 **     * When a read/write transaction is committed, a new version of the
@@ -294,7 +294,7 @@
 **       if it is found that the file has been modified within cloud storage
 **       since it was downloaded at the beginning of the transaction (because
 **       some other client wrote to it), the commit fails and the transaction
-**       is rolled back. The extended error code in this case is 
+**       is rolled back. The extended error code in this case is
 **       SQLITE_BUSY_SNAPSHOT.
 **
 ** Virtual tables without a database:
@@ -333,12 +333,12 @@ typedef struct sqlite3_bcvfs sqlite3_bcvfs;
 ** Create a new Cloud Backed SQLite VFS in the current process. Parameter zDir
 ** must point to a nul-terminated buffer containing the path (absolute
 ** or relative) of the directory to use for the various files created
-** by Cloud Backed SQLite. Parameter zName should point to a buffer containing 
+** by Cloud Backed SQLite. Parameter zName should point to a buffer containing
 ** the name of the new VFS.
 **
 ** Unless there is a daemon process running in the directory, this routine
 ** requires exclusive access to the directory. If it is already in use by
-** some other Cloud Backed SQLite VFS, in this or another process, this routine 
+** some other Cloud Backed SQLite VFS, in this or another process, this routine
 ** fails with SQLITE_BUSY.
 */
 int sqlite3_bcvfs_create(
@@ -400,14 +400,14 @@ int sqlite3_bcvfs_isdaemon(sqlite3_bcvfs*);
 /*
 ** Configure an authentication callback.
 **
-** An authentication callback is required by both daemon and daemonless 
+** An authentication callback is required by both daemon and daemonless
 ** mode VFS.
 */
 int sqlite3_bcvfs_auth_callback(
   sqlite3_bcvfs *pFs,
   void *pAuthCtx,
   int(*xAuth)(
-      void *pCtx, 
+      void *pCtx,
       const char *zStorage,
       const char *zAccount,
       const char *zContainer,
@@ -481,7 +481,7 @@ int sqlite3_bcvfs_attach(
 **   2) There are no local changes that have not been pushed to the cloud
 **      to any databases within the container.
 **
-** If the container is successfully detached, SQLITE_OK is returned. If 
+** If the container is successfully detached, SQLITE_OK is returned. If
 ** either of the two conditions above are not met, SQLITE_BUSY is returned
 ** and the container remains attached.
 **
@@ -514,9 +514,9 @@ int sqlite3_bcvfs_poll(sqlite3_bcvfs *pFs, const char *zCont, char **pzErr);
 **
 ** If all locally modified databases are succesfully uploaded, SQLITE_OK
 ** is returned. If parameter pzErr is not NULL, *pzErr is set to NULL in
-** this case. 
+** this case.
 **
-** Otherwise, if an error occurs, either an SQLite or HTTPS error code 
+** Otherwise, if an error occurs, either an SQLite or HTTPS error code
 ** is returned.
 **
 ** If this function returns a value other than SQLITE_OK and parameter pzErr
@@ -564,7 +564,7 @@ int sqlite3_bcvfs_upload(
 **   * if another client creates a database in the container using the
 **     same name as the local-only database, then this is handled in the
 **     same way as a write collision - subsequent attempts to update the
-**     local manifest using sqlite3_bcvfs_poll() (or "PRAGMA bcv_poll") 
+**     local manifest using sqlite3_bcvfs_poll() (or "PRAGMA bcv_poll")
 **     will fail.
 **
 **   * if another client manipulates the parent database in such a way
@@ -586,11 +586,11 @@ int sqlite3_bcvfs_copy(
 
 /*
 ** Delete database zDb from container zCont, which must be the name (alias)
-** of an attached container. 
+** of an attached container.
 **
-** This operation deletes the named database locally only. The database 
-** is not deleted from cloud storage until the next call to 
-** sqlite3_bcvfs_upload(). If there are local changes to the deleted 
+** This operation deletes the named database locally only. The database
+** is not deleted from cloud storage until the next call to
+** sqlite3_bcvfs_upload(). If there are local changes to the deleted
 ** database, they are lost.
 **
 ** If there are local connections holding the database open, this operation
@@ -611,7 +611,7 @@ int sqlite3_bcvfs_delete(
 int sqlite3_bcvfs_destroy(sqlite3_bcvfs *pFs);
 
 /*
-** Register the eponymous vtab modules "bcv_database" and "bcv_container" 
+** Register the eponymous vtab modules "bcv_database" and "bcv_container"
 ** with the database handle passed as the only argument.
 **
 ** This API is available for both both daemon and daemonless mode VFS.
@@ -682,8 +682,8 @@ int sqlite3_bcvfs_prefetch_errcode(sqlite3_prefetch*);
 ** of (*piVal) is undefined.
 */
 int sqlite3_bcvfs_prefetch_status(
-  sqlite3_prefetch*, 
-  int op, 
+  sqlite3_prefetch*,
+  int op,
   sqlite3_int64 *piVal
 );
 
@@ -723,7 +723,7 @@ void sqlite3_bcvfs_prefetch_destroy(sqlite3_prefetch*);
 ** chance of an HTTP error code being returned.
 **
 ** This function fails with SQLITE_BUSY if there exist one or more clients
-** with open read or write transactions on databases within the named 
+** with open read or write transactions on databases within the named
 ** container.
 **
 ** If the VFS passed as the first argument is a proxy VFS, then this
@@ -736,4 +736,3 @@ int sqlite3_bcvfs_revert(sqlite3_bcvfs*, const char *zCont, char **pzErr);
 #ifdef __cplusplus
 } /* end of the extern "C" block */
 #endif
-

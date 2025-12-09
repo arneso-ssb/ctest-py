@@ -37,7 +37,7 @@
 /*
 ** Type cast to (sqlite3_bcv_container*) for "azure" cloud modules.
 **
-** zContainer: 
+** zContainer:
 **   Name of Azure container this object is used to create/delete/access.
 **
 ** zSlashAccountSlash:
@@ -67,53 +67,53 @@ struct BcvAzure {
 ** a buffer obtained by calling sqlite3_malloc(). If successful, (*paOut)
 ** is set to point to the new buffer, (*pnOut) is set to its size in bytes,
 ** and SQLITE_OK returned. In this case it is the responsibility of the caller
-** to free the returned buffer using sqlite3_free(). 
+** to free the returned buffer using sqlite3_free().
 **
 ** If an error occurs, an SQLite error code is returned and both (*paOut)
 ** and (*pnOut) set to zero. In this case, *pzErr may be set to point
-** to a new buffer containing an English language error message. It is the 
+** to a new buffer containing an English language error message. It is the
 ** responsibility of the caller to eventually free any such buffer using
 ** sqlite3_free().
 */
 static void bcvBase64DecodeRc(
   int *pRc,
-  const char *zBase64, 
+  const char *zBase64,
   u8 **paOut, int *pnOut,
   char **pzErr
 ){
   static u8 aBase64Decode[256] = {
-    0x40, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x3E, 0x80, 0x80, 0x80, 0x3F, 
-    0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 
-    0x3C, 0x3D, 0x80, 0x80, 0x80, 0x00, 0x80, 0x80, 
-    0x80, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 
-    0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 
-    0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 
-    0x17, 0x18, 0x19, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 
-    0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 
-    0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 
-    0x31, 0x32, 0x33, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 
+    0x40, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x3E, 0x80, 0x80, 0x80, 0x3F,
+    0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B,
+    0x3C, 0x3D, 0x80, 0x80, 0x80, 0x00, 0x80, 0x80,
+    0x80, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06,
+    0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E,
+    0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
+    0x17, 0x18, 0x19, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
+    0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+    0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30,
+    0x31, 0x32, 0x33, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
   };
 
   /* Initialize output parameters */
@@ -125,7 +125,7 @@ static void bcvBase64DecodeRc(
     unsigned char *aOut = 0;
     const unsigned char *zIn = (const unsigned char*)zBase64;
     int nIn = strlen((const char*)zIn);
- 
+
     if( nIn>0 && (nIn%4)==0 ){
       int iOut = 0;
       int i;
@@ -139,10 +139,10 @@ static void bcvBase64DecodeRc(
       aOut = (u8*)bcvMallocRc(pRc, nOut);
       if( aOut ){
         for(i=0; i<nIn; i+=4){
-          if( aBase64Decode[ zIn[i+0] ]==0x80 
-           || aBase64Decode[ zIn[i+1] ]==0x80 
-           || aBase64Decode[ zIn[i+2] ]==0x80 
-           || aBase64Decode[ zIn[i+3] ]==0x80 
+          if( aBase64Decode[ zIn[i+0] ]==0x80
+           || aBase64Decode[ zIn[i+1] ]==0x80
+           || aBase64Decode[ zIn[i+2] ]==0x80
+           || aBase64Decode[ zIn[i+3] ]==0x80
           ){
             *pzErr = sqlite3_mprintf(
                 "cannot decode base64 data - illegal character"
@@ -175,8 +175,8 @@ static void bcvBase64DecodeRc(
 
 
 static void bcvModuleGenericCb(
-  sqlite3_bcv_job *pCtx, 
-  sqlite3_bcv_request *pReq, 
+  sqlite3_bcv_job *pCtx,
+  sqlite3_bcv_request *pReq,
   void *pApp
 ){
   int rc;
@@ -188,8 +188,8 @@ static void bcvModuleGenericCb(
 }
 
 static void bcvModuleFetchCb(
-  sqlite3_bcv_job *pCtx, 
-  sqlite3_bcv_request *pReq, 
+  sqlite3_bcv_job *pCtx,
+  sqlite3_bcv_request *pReq,
   void *pApp
 ){
   int rc;
@@ -213,8 +213,8 @@ static void bcvModuleFetchCb(
 }
 
 static void bcvModulePutCb(
-  sqlite3_bcv_job *pCtx, 
-  sqlite3_bcv_request *pReq, 
+  sqlite3_bcv_job *pCtx,
+  sqlite3_bcv_request *pReq,
   void *pApp
 ){
   int rc;
@@ -287,8 +287,8 @@ static void *bcvModuleListTagHandler(
 }
 
 static void bcvModuleListCb(
-  sqlite3_bcv_job *pCtx, 
-  sqlite3_bcv_request *pReq, 
+  sqlite3_bcv_job *pCtx,
+  sqlite3_bcv_request *pReq,
   sqlite3_bcv_container *pCont,
   const char *zNameTag,
   void (*xNext)(sqlite3_bcv_container*,sqlite3_bcv_job*,const char*)
@@ -326,7 +326,7 @@ static void bcvModuleListCb(
 
 
 /*
-** Cross-platform version of gmtime_r().   
+** Cross-platform version of gmtime_r().
 */
 #ifdef __WIN32__
 static void osGmtime(const time_t *t, struct tm *r){
@@ -342,7 +342,7 @@ static void osGmtime(const time_t *t, struct tm *r){
 
 /*
 ** Argument zBuffer must point to a buffer at least AZURE_DATEHEADER_SIZE
-** bytes in size. This function populates the buffer with an 
+** bytes in size. This function populates the buffer with an
 ** Azure "x-ms-date:" header specifying the current GMT date and time.
 */
 static void bcvAzureDateHeader(char *zBuffer){
@@ -350,7 +350,7 @@ static void bcvAzureDateHeader(char *zBuffer){
     "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
   };
   static const char *nameOfMonth[] = {
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
   };
   time_t t = time(NULL);
@@ -425,10 +425,10 @@ static int bcvAzureOpen(
     const char *zVal = azParam[i+1];
     if( 0==sqlite3_stricmp(zKey, "maxresults") ){
       nMaxResults = bcvParseInt((const u8*)zVal, -1);
-    }else 
+    }else
     if( 0==sqlite3_stricmp(zKey, "emulator") ){
       zEmulator = zVal;
-    }else 
+    }else
     if( 0==sqlite3_stricmp(zKey, "sas") ){
       if( zVal[1]!='\0' || (zVal[0]!='0' && zVal[0]!='1') ){
         *pzErrmsg = sqlite3_mprintf(
@@ -514,7 +514,7 @@ static int bcvAzureOpen(
         (bCName ? "/" : ""), (bCName ? zContainer : "")
       );
     }else if( zEmulator ){
-      pNew->zBase = bcvMprintfRc(&rc, 
+      pNew->zBase = bcvMprintfRc(&rc,
           "http://%s/%s/%s", zEmulator, zUser, zContainer
       );
     }else{
@@ -538,8 +538,8 @@ static int bcvAzureOpen(
 ** and its arguments passed as the third and subsequent parameters.
 */
 static void bcvUriPrintf(
-  sqlite3_bcv_job *pCtx, 
-  sqlite3_bcv_request *pReq, 
+  sqlite3_bcv_job *pCtx,
+  sqlite3_bcv_request *pReq,
   const char *zFmt, ...           /* printf() format string + args */
 ){
   char *zRet;
@@ -559,8 +559,8 @@ static void bcvUriPrintf(
 ** Like bcvUriPrintf(), but for sqlite3_bcv_request_set_log().
 */
 static void bcvUriLogPrintf(
-  sqlite3_bcv_job *pCtx, 
-  sqlite3_bcv_request *pReq, 
+  sqlite3_bcv_job *pCtx,
+  sqlite3_bcv_request *pReq,
   const char *zFmt, ...           /* printf() format string + args */
 ){
   char *zRet;
@@ -577,8 +577,8 @@ static void bcvUriLogPrintf(
 }
 
 static void bcvHdrPrintf(
-  sqlite3_bcv_job *pCtx, 
-  sqlite3_bcv_request *pReq, 
+  sqlite3_bcv_job *pCtx,
+  sqlite3_bcv_request *pReq,
   const char *zFmt, ...           /* printf() format string + args */
 ){
   char *zRet;
@@ -597,11 +597,11 @@ static void bcvHdrPrintf(
 /*
 ** Encode the binary data in buffer aIn[] (size nIn bytes) as a
 ** nul-terminated base64 string. Return a pointer to the buffer. It is
-** the responsibility of the caller to eventually free the returned 
+** the responsibility of the caller to eventually free the returned
 ** buffer using sqlite3_free().
 */
 char *bcvBase64Encode(const unsigned char *aIn, int nIn){
-  static const char aBase64Encode[] = 
+  static const char aBase64Encode[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     "abcdefghijklmnopqrstuvwxyz"
     "0123456789+/";
@@ -641,7 +641,7 @@ char *bcvBase64Encode(const unsigned char *aIn, int nIn){
 static void bcvAzureAuthHeader(
   BcvAzure *p,
   sqlite3_bcv_job *pCtx,
-  sqlite3_bcv_request *pReq, 
+  sqlite3_bcv_request *pReq,
   const char *zFmt, ...           /* printf() format string + args */
 ){
   unsigned char aDigest[SHA256_DIGEST_LENGTH];
@@ -685,8 +685,8 @@ static void bcvAzureHeadFetch(
 );
 
 static void bcvAzureHeadCb(
-  sqlite3_bcv_job *pCtx, 
-  sqlite3_bcv_request *pReq, 
+  sqlite3_bcv_job *pCtx,
+  sqlite3_bcv_request *pReq,
   void *p
 ){
   AzureHeadCtx *pHead = (AzureHeadCtx*)p;
@@ -776,10 +776,10 @@ static void bcvAzureHeadFetch(
   }else{
     bcvUriPrintf(pCtx, pReq, "%s/%s", p->zBase, zFile);
     bcvAzureAuthHeader(p, pCtx, pReq,
-        "%s\n\n\n\n\n\n\n\n\n%s\n\n\n%s\n%s\n%s%s/%s", 
+        "%s\n\n\n\n\n\n\n\n\n%s\n\n\n%s\n%s\n%s%s/%s",
         (bHead==0 ? "GET" : "HEAD"),
         (bHead==0 ? zETag : 0),
-        zDate, AZURE_VERSION_HDR, 
+        zDate, AZURE_VERSION_HDR,
         p->zSlashAccountSlash, p->zContainer, zFile
     );
   }
@@ -789,7 +789,7 @@ static void bcvAzureHeadFetch(
 
 static void bcvAzureFetch(
   sqlite3_bcv_container *pCont,
-  sqlite3_bcv_job *pCtx, 
+  sqlite3_bcv_job *pCtx,
   const char *zFile,
   int flags,
   const void *zETag, int nETag
@@ -804,9 +804,9 @@ static void bcvAzureFetch(
 }
 
 static void bcvAzurePut(
-  sqlite3_bcv_container *pCont, 
+  sqlite3_bcv_container *pCont,
   sqlite3_bcv_job *pCtx,
-  const char *zFile, 
+  const char *zFile,
   const unsigned char *aData, int nData,
   const char *zETag
 ){
@@ -850,12 +850,12 @@ static void bcvAzurePut(
   }else{
     bcvUriPrintf(pCtx, pReq, "%s/%s", p->zBase, zFile);
     bcvAzureAuthHeader(p, pCtx, pReq,
-        "PUT\n\n\n%d\n\n%s\n\n\n%s\n%s\n\n\n%s\n%s\n%s\n%s%s/%s", 
-        nData, 
-        "application/octet-stream", 
+        "PUT\n\n\n%d\n\n%s\n\n\n%s\n%s\n\n\n%s\n%s\n%s\n%s%s/%s",
+        nData,
+        "application/octet-stream",
         zETag ? zETag : "",
         zIfNone ? zIfNone : "",
-        AZURE_BLOBTYPE_HDR, 
+        AZURE_BLOBTYPE_HDR,
         zDate, AZURE_VERSION_HDR,
         p->zSlashAccountSlash,
         p->zContainer, zFile
@@ -864,8 +864,8 @@ static void bcvAzurePut(
 }
 
 static void bcvAzureDelete(
-  sqlite3_bcv_container *pCont, 
-  sqlite3_bcv_job *pCtx, 
+  sqlite3_bcv_container *pCont,
+  sqlite3_bcv_job *pCtx,
   const char *zFile,
   const char *zIfMatch
 ){
@@ -888,7 +888,7 @@ static void bcvAzureDelete(
   }else{
     bcvUriPrintf(pCtx, pReq, "%s/%s", p->zBase, zFile);
     bcvAzureAuthHeader(p, pCtx, pReq,
-        "DELETE\n\n\n\n\n\n\n\n%s\n\n\n\n%s\n%s\n%s%s/%s", 
+        "DELETE\n\n\n\n\n\n\n\n%s\n\n\n\n%s\n%s\n%s%s/%s",
         zIfMatch ? zIfMatch : "",
         zDate, AZURE_VERSION_HDR,
         p->zSlashAccountSlash,
@@ -899,8 +899,8 @@ static void bcvAzureDelete(
 
 static void bcvAzureListCb(sqlite3_bcv_job*, sqlite3_bcv_request*, void*);
 static void bcvAzureListFiles(
-  sqlite3_bcv_container *pCont, 
-  sqlite3_bcv_job *pCtx, 
+  sqlite3_bcv_container *pCont,
+  sqlite3_bcv_job *pCtx,
   const char *zMarker
 ){
   BcvAzure *p = (BcvAzure*)pCont;
@@ -915,7 +915,7 @@ static void bcvAzureListFiles(
   sqlite3_bcv_request_set_header(pReq, zDate);
   sqlite3_bcv_request_set_header(pReq, AZURE_VERSION_HDR);
 
-  bcvUriPrintf(pCtx, pReq, 
+  bcvUriPrintf(pCtx, pReq,
       "%s?restype=container&comp=list&maxresults=%d&marker=%s&prefix=%s%s%s",
       p->zBase, p->nMaxResults, zMarker, (zPrefix ? zPrefix : ""),
       (p->bSas ? "&" : ""), (p->bSas ? p->zKey : "")
@@ -924,12 +924,12 @@ static void bcvAzureListFiles(
     bcvAzureAuthHeader(p, pCtx, pReq,
         "GET\n\n\n\n\n\n\n\n\n\n\n\n%s\n%s\n%s%s\ncomp:list"
         "\nmarker:%s\nmaxresults:%d\nprefix:%s\nrestype:container",
-        zDate, AZURE_VERSION_HDR, 
-        p->zSlashAccountSlash, p->zContainer, 
+        zDate, AZURE_VERSION_HDR,
+        p->zSlashAccountSlash, p->zContainer,
         zMarker, p->nMaxResults, (zPrefix ? zPrefix : "")
     );
   }else{
-    bcvUriLogPrintf(pCtx, pReq, 
+    bcvUriLogPrintf(pCtx, pReq,
         "%s?restype=container&comp=list&maxresults=%d&marker=%s&...",
         p->zBase, p->nMaxResults, zMarker
     );
@@ -937,8 +937,8 @@ static void bcvAzureListFiles(
 }
 
 static void bcvAzureListCb(
-  sqlite3_bcv_job *pCtx, 
-  sqlite3_bcv_request *pReq, 
+  sqlite3_bcv_job *pCtx,
+  sqlite3_bcv_request *pReq,
   void *pApp
 ){
   sqlite3_bcv_container *pCont = (sqlite3_bcv_container*)pApp;
@@ -953,7 +953,7 @@ static void bcvAzureList(
 }
 
 static void bcvAzureCreate(
-  sqlite3_bcv_container *pCont, 
+  sqlite3_bcv_container *pCont,
   sqlite3_bcv_job *pCtx
 ){
   BcvAzure *p = (BcvAzure*)pCont;
@@ -974,14 +974,14 @@ static void bcvAzureCreate(
   }else{
     bcvUriPrintf(pCtx, pReq, "%s?restype=container", p->zBase);
     bcvAzureAuthHeader(p, pCtx, pReq,
-        "PUT\n\n\n\n\n\n\n\n\n\n\n\n%s\n%s\n%s%s\nrestype:container", 
+        "PUT\n\n\n\n\n\n\n\n\n\n\n\n%s\n%s\n%s%s\nrestype:container",
         zDate, AZURE_VERSION_HDR, p->zSlashAccountSlash, p->zContainer
     );
   }
 }
 
 static void bcvAzureDestroy(
-  sqlite3_bcv_container *pCont, 
+  sqlite3_bcv_container *pCont,
   sqlite3_bcv_job *pCtx
 ){
   BcvAzure *p = (BcvAzure*)pCont;
@@ -1002,7 +1002,7 @@ static void bcvAzureDestroy(
   }else{
     bcvUriPrintf(pCtx, pReq, "%s?restype=container", p->zBase);
     bcvAzureAuthHeader(p, pCtx, pReq,
-        "DELETE\n\n\n\n\n\n\n\n\n\n\n\n%s\n%s\n%s%s\nrestype:container", 
+        "DELETE\n\n\n\n\n\n\n\n\n\n\n\n%s\n%s\n%s%s\nrestype:container",
         zDate, AZURE_VERSION_HDR, p->zSlashAccountSlash, p->zContainer
     );
   }
@@ -1062,7 +1062,7 @@ static int bcvGoogleOpen(
 
 static void bcvGoogleFetch(
   sqlite3_bcv_container *pCont,
-  sqlite3_bcv_job *pCtx, 
+  sqlite3_bcv_job *pCtx,
   const char *zFile,
   int flags,
   const void *zETag, int nETag
@@ -1070,7 +1070,7 @@ static void bcvGoogleFetch(
   BcvGoogle *p = (BcvGoogle*)pCont;
   sqlite3_bcv_request *pReq = 0;
 
-  pReq = sqlite3_bcv_job_request(pCtx, 
+  pReq = sqlite3_bcv_job_request(pCtx,
       (void*)"x-goog-generation", bcvModuleFetchCb
   );
   bcvUriPrintf(pCtx, pReq, "%s/%s", p->zBase, zFile);
@@ -1082,9 +1082,9 @@ static void bcvGoogleFetch(
 }
 
 static void bcvGooglePut(
-  sqlite3_bcv_container *pCont, 
+  sqlite3_bcv_container *pCont,
   sqlite3_bcv_job *pCtx,
-  const char *zFile, 
+  const char *zFile,
   const unsigned char *aData, int nData,
   const char *zETag
 ){
@@ -1103,10 +1103,10 @@ static void bcvGooglePut(
   }
   sqlite3_bcv_request_set_body(pReq, aData, nData);
 }
- 
+
 static void bcvGoogleDelete(
-  sqlite3_bcv_container *pCont, 
-  sqlite3_bcv_job *pCtx, 
+  sqlite3_bcv_container *pCont,
+  sqlite3_bcv_job *pCtx,
   const char *zFile,
   const char *zETag
 ){
@@ -1125,8 +1125,8 @@ static void bcvGoogleDelete(
 
 static void bcvGoogleListCb(sqlite3_bcv_job*, sqlite3_bcv_request*, void*);
 static void bcvGoogleListFiles(
-  sqlite3_bcv_container *pCont, 
-  sqlite3_bcv_job *pCtx, 
+  sqlite3_bcv_container *pCont,
+  sqlite3_bcv_job *pCtx,
   const char *zMarker
 ){
   const int nMax = GOOGLE_MAX_RESULTS;
@@ -1141,8 +1141,8 @@ static void bcvGoogleListFiles(
 }
 
 static void bcvGoogleListCb(
-  sqlite3_bcv_job *pCtx, 
-  sqlite3_bcv_request *pReq, 
+  sqlite3_bcv_job *pCtx,
+  sqlite3_bcv_request *pReq,
   void *pApp
 ){
   sqlite3_bcv_container *pCont = (sqlite3_bcv_container*)pApp;
@@ -1150,14 +1150,14 @@ static void bcvGoogleListCb(
 }
 
 static void bcvGoogleList(
-  sqlite3_bcv_container *pCont, 
+  sqlite3_bcv_container *pCont,
   sqlite3_bcv_job *pCtx
 ){
   bcvGoogleListFiles(pCont, pCtx, 0);
 }
 
 static void bcvGoogleCreate(
-  sqlite3_bcv_container *pCont, 
+  sqlite3_bcv_container *pCont,
   sqlite3_bcv_job *pCtx
 ){
   BcvGoogle *p = (BcvGoogle*)pCont;
@@ -1171,7 +1171,7 @@ static void bcvGoogleCreate(
 }
 
 static void bcvGoogleDestroy(
-  sqlite3_bcv_container *pCont, 
+  sqlite3_bcv_container *pCont,
   sqlite3_bcv_job *pCtx
 ){
 }
@@ -1205,4 +1205,3 @@ int bcvInstallBuiltinModules(void){
   }
   return rc;
 }
-

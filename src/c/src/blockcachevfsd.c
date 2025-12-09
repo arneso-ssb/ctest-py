@@ -93,7 +93,7 @@ struct CommandSwitches {
 
 
 static void fatal_sql_error(sqlite3 *db, const char *zMsg){
-  fprintf(stderr, "FATAL: SQL error in %s (rc=%d) (errmsg=%s)\n", 
+  fprintf(stderr, "FATAL: SQL error in %s (rc=%d) (errmsg=%s)\n",
       zMsg, sqlite3_errcode(db), sqlite3_errmsg(db)
   );
   abort();
@@ -162,7 +162,7 @@ static char *bdStrdup(const char *zIn){
 }
 
 static int select_option(
-  const char *zOpt, 
+  const char *zOpt,
   SelectOption *aOpt,
   u32 mask,
   int bUnknownFatal               /* If true, unknown option is a fatal error */
@@ -357,9 +357,9 @@ static int parse_integer(const char *zInt){
 
 
 static void parse_more_switches(
-  CommandSwitches *pCmd, 
-  const char **azArg, 
-  int nArg, 
+  CommandSwitches *pCmd,
+  const char **azArg,
+  int nArg,
   int *piFail,
   u32 mask
 ){
@@ -520,7 +520,7 @@ static void parse_more_switches(
         break;
       case COMMANDLINE_NAMEBYTES:
         pCmd->nNamebytes = parse_integer(azArg[i]);
-        if( pCmd->nNamebytes>BCV_MAX_NAMEBYTES 
+        if( pCmd->nNamebytes>BCV_MAX_NAMEBYTES
          || pCmd->nNamebytes<BCV_MIN_NAMEBYTES
         ){
           fatal_error("value for -namebytes out of range "
@@ -596,9 +596,9 @@ static void parse_more_switches(
 }
 
 static void parse_switches(
-  CommandSwitches *pCmd, 
-  char **azArg, 
-  int nArg, 
+  CommandSwitches *pCmd,
+  char **azArg,
+  int nArg,
   int *piFail,
   u32 mask
 ){
@@ -649,7 +649,7 @@ static void bcvOpenHandle(CommandSwitches *pCmd, sqlite3_bcv **ppBcv){
 }
 
 static void bcvOpenContainer(
-  CommandSwitches *pCmd, 
+  CommandSwitches *pCmd,
   BcvContainer **ppCont,
   BcvDispatch **ppDisp
 ){
@@ -747,7 +747,7 @@ static int main_download(int argc, char **argv){
 
   /* Parse command line */
   if( argc<=2 ){
-    fprintf(stderr, 
+    fprintf(stderr,
         "Usage: %s download ?SWITCHES? DBNAME ?LOCALFILE?\n", argv[0]
     );
     exit(1);
@@ -848,10 +848,10 @@ static int main_files(int argc, char **argv){
 }
 
 static void bcvFetchManifestCb(
-  void *pApp, 
-  int rc, 
-  char *zETag, 
-  const u8 *aData, 
+  void *pApp,
+  int rc,
+  char *zETag,
+  const u8 *aData,
   int nData,
   const u8 *aHdrs, int nHdrs
 ){
@@ -907,8 +907,8 @@ static int main_list(int argc, char **argv){
 }
 
 static int bdOpenLocalFile(
-  const char *zCont, 
-  const char *zDb, 
+  const char *zCont,
+  const char *zDb,
   int bWal,
   int bReadonly,
   sqlite3_file **ppFile
@@ -1008,7 +1008,7 @@ static int main_create(int argc, char **argv){
     exit(1);
   }
   zCont = argv[argc-1];
-  parse_switches(&cmd, &argv[2], argc-3, 0, COMMAND_CREATE | COMMAND_CMDLINE); 
+  parse_switches(&cmd, &argv[2], argc-3, 0, COMMAND_CREATE | COMMAND_CMDLINE);
 
   cmd.zContainer = (char*)zCont;
   bcvOpenHandle(&cmd, &pBcv);
@@ -1156,7 +1156,7 @@ static void daemon_log_timestamp(DaemonCtx *p, char *zBuf){
     sec = s - min*60;
 
     sqlite3_snprintf(128, zBuf,
-        " [%.4d/%.2d/%.2d %.2d:%.2d:%.2d.%.3d]", 
+        " [%.4d/%.2d/%.2d %.2d:%.2d:%.2d.%.3d]",
         year, month, day, hour, min, sec, ms%1000
     );
   }
@@ -1221,7 +1221,7 @@ static void daemon_error(const char *zFmt, ...){
 }
 
 /*
-** Start listening on a localhost port. Return the port number. 
+** Start listening on a localhost port. Return the port number.
 **
 ** If successful, the port number is left in DaemonCtx.iListenPort. If an
 ** error occurs, this function does not return. Instead, it outputs a
@@ -1265,7 +1265,7 @@ static void bdListen(DaemonCtx *p){
     }
   }
 
-  fatal_error("failed to bind to localhost port - tried %d to %d", 
+  fatal_error("failed to bind to localhost port - tried %d to %d",
       22002, 22002+nAttempt-1
   );
 }
@@ -1333,7 +1333,7 @@ static void bdLogRecvMsg(DaemonCtx *p, DClient *pClient, BcvMessage *pMsg){
 
       case BCV_MESSAGE_VTAB:
         daemon_msg_log(p, "%d->D: "
-            "VTAB(\"%s\", \"%s\", \"%s\")", pClient->iClientId, 
+            "VTAB(\"%s\", \"%s\", \"%s\")", pClient->iClientId,
             pMsg->u.vtab.zVtab,
             pMsg->u.vtab.zContainer,
             pMsg->u.vtab.zDatabase
@@ -1342,7 +1342,7 @@ static void bdLogRecvMsg(DaemonCtx *p, DClient *pClient, BcvMessage *pMsg){
 
       case BCV_MESSAGE_READ: {
         char *zArray = bdArrayToString(pMsg->u.read.aMru, pMsg->u.read.nMru);
-        daemon_msg_log(p, "%d->D: READ(%d, [%s])", 
+        daemon_msg_log(p, "%d->D: READ(%d, [%s])",
             pClient->iClientId, (int)pMsg->u.read.iBlk, zArray
         );
         sqlite3_free(zArray);
@@ -1358,15 +1358,15 @@ static void bdLogRecvMsg(DaemonCtx *p, DClient *pClient, BcvMessage *pMsg){
 
       case BCV_MESSAGE_HELLO:
         daemon_msg_log(p, "%d->D: "
-            "HELLO(\"%s\",\"%s\")", pClient->iClientId, 
+            "HELLO(\"%s\",\"%s\")", pClient->iClientId,
             pMsg->u.hello.zContainer, pMsg->u.hello.zDatabase
         );
         break;
 
       case BCV_MESSAGE_CMD: {
         int eCmd = pMsg->u.cmd.eCmd;
-        daemon_msg_log(p, "%d->D: CMD(%s)", pClient->iClientId, 
-          eCmd==BCV_CMD_POLL ? "poll" : 
+        daemon_msg_log(p, "%d->D: CMD(%s)", pClient->iClientId,
+          eCmd==BCV_CMD_POLL ? "poll" :
           eCmd==BCV_CMD_CLIENT ? "client" : "???"
         );
         break;
@@ -1374,14 +1374,14 @@ static void bdLogRecvMsg(DaemonCtx *p, DClient *pClient, BcvMessage *pMsg){
 
       case BCV_MESSAGE_PASS:
         daemon_msg_log(p, "%d->D: "
-            "PASS(%d bytes of auth data)", pClient->iClientId, 
+            "PASS(%d bytes of auth data)", pClient->iClientId,
             bcvStrlen(pMsg->u.pass.zAuth)
         );
         break;
 
       case BCV_MESSAGE_PREFETCH:
         daemon_msg_log(p, "%d->D: "
-            "PREFETCH(%d bytes of auth data, %d, %d)", pClient->iClientId, 
+            "PREFETCH(%d bytes of auth data, %d, %d)", pClient->iClientId,
             bcvStrlen(pMsg->u.prefetch.zAuth), pMsg->u.prefetch.nRequest,
             pMsg->u.prefetch.nMs
         );
@@ -1403,14 +1403,14 @@ static void bdLogSendMsg(DaemonCtx *p, DClient *pClient, BcvMessage *pMsg){
         );
         break;
       case BCV_MESSAGE_VTAB_REPLY:
-        daemon_msg_log(p, "D->%d: VTAB_REPLY(%d bytes...)", 
+        daemon_msg_log(p, "D->%d: VTAB_REPLY(%d bytes...)",
             pClient->iClientId, pMsg->u.vtab_r.nData
         );
         break;
       case BCV_MESSAGE_HELLO_REPLY:
-        daemon_msg_log(p, 
+        daemon_msg_log(p,
             "D->%d: HELLO_REPLY(%d,\"%s\",\"%s\",\"%s\",\"%s\",%d,%d)",
-            pClient->iClientId, 
+            pClient->iClientId,
             pMsg->u.hello_r.errCode,
             pMsg->u.hello_r.zErrMsg,
             pMsg->u.hello_r.zStorage,
@@ -1479,8 +1479,8 @@ static void bdClientDecrRefcount(DClient *pClient){
 }
 
 static void bdDisconnectClient(
-  DaemonCtx *p, 
-  DClient *pClient, 
+  DaemonCtx *p,
+  DClient *pClient,
   const char *zWhy
 ){
   DClient **pp;
@@ -1554,7 +1554,7 @@ static void bdBlockDownloadFree(FetchCtx *p){
 */
 static void bcvCreateDir(int *pRc, BcvCommon *p, const char *zCont){
   struct stat buf;
-  char *zDir = bcvMprintfRc(pRc, 
+  char *zDir = bcvMprintfRc(pRc,
       "%s" BCV_PATH_SEPARATOR "%s", p->zDir, zCont
   );
   if( *pRc==SQLITE_OK && stat(zDir, &buf)<0 ){
@@ -1566,10 +1566,10 @@ static void bcvCreateDir(int *pRc, BcvCommon *p, const char *zCont){
 }
 
 static void bdAttachCb(
-  void *pCtx, 
-  int errCode, 
-  char *zETag, 
-  const u8 *aData, 
+  void *pCtx,
+  int errCode,
+  char *zETag,
+  const u8 *aData,
   int nData,
   const u8 *aHdrs, int nHdrs
 ){
@@ -1588,7 +1588,7 @@ static void bdAttachCb(
   bdBlockDownloadFree(pDLCtx);
   if( pClient==0 ) return;
 
-  /* Check if there is already a container of the same name attached. 
+  /* Check if there is already a container of the same name attached.
   ** If there is, it is an error.  */
   pMsg = pClient->pMsg;
   zName = pMsg->u.attach.zAlias?pMsg->u.attach.zAlias:pMsg->u.attach.zContainer;
@@ -1698,8 +1698,8 @@ static FetchCtx *bdFetchCtx(
 ** again after the network request is answered anyway.
 */
 static void bdHandleAttach(
-  DaemonCtx *p, 
-  DClient *pClient, 
+  DaemonCtx *p,
+  DClient *pClient,
   BcvMessage *pMsg
 ){
   int rc = SQLITE_OK;;
@@ -1711,7 +1711,7 @@ static void bdHandleAttach(
 
   rc = bcvContainerOpen(
       pMsg->u.attach.zStorage, pMsg->u.attach.zAccount,
-      pMsg->u.attach.zAuth, pMsg->u.attach.zContainer, 
+      pMsg->u.attach.zAuth, pMsg->u.attach.zContainer,
       &pBcv, &zErr
   );
   if( rc==SQLITE_OK ){
@@ -1738,8 +1738,8 @@ static void bdHandleAttach(
 ** Handle an DETACH message from a client.
 */
 static void bdHandleDetach(
-  DaemonCtx *p, 
-  DClient *pClient, 
+  DaemonCtx *p,
+  DClient *pClient,
   BcvMessage *pMsg
 ){
   BcvMessage reply;
@@ -1780,9 +1780,9 @@ static void bdHandleDetach(
 ** Version of xClientCount for proxy VFS
 */
 static void bcvProxyClientCount(
-  BcvCommon *pCommon, 
-  Container *pCont, 
-  int iDbId, 
+  BcvCommon *pCommon,
+  Container *pCont,
+  int iDbId,
   int *pnClient,
   int *pnPrefetch,
   int *pnReader
@@ -1816,14 +1816,14 @@ static void bcvProxyClientCount(
 ** table. Specifically, this adds two rows to the returned data:
 **
 **   memory_client_manifest:
-**     Total byte of memory used by manifests that are kept in memory only 
-**     for clients use - not the newest manifest available held by the 
+**     Total byte of memory used by manifests that are kept in memory only
+**     for clients use - not the newest manifest available held by the
 **     container object.
 **
 **   memory_client_array:
-**     Memory used for arrays of block references held in the daemon on 
+**     Memory used for arrays of block references held in the daemon on
 **     behalf of clients.
-**  
+**
 */
 static u8 *bdExtraVtabData(int *pRc, DaemonCtx *p, u8 *aData, int *pnData){
   i64 nManifest = 0;
@@ -1858,8 +1858,8 @@ static u8 *bdExtraVtabData(int *pRc, DaemonCtx *p, u8 *aData, int *pnData){
 ** Handle a message of type BCV_MESSAGE_VTAB from client pClient.
 */
 static void bdHandleVtab(
-  DaemonCtx *p, 
-  DClient *pClient, 
+  DaemonCtx *p,
+  DClient *pClient,
   BcvMessage *pMsg
 ){
   const char *zTab = pMsg->u.vtab.zVtab;
@@ -1876,7 +1876,7 @@ static void bdHandleVtab(
   memset(&reply, 0, sizeof(reply));
   reply.eType = BCV_MESSAGE_VTAB_REPLY;
 
-  aData = bcvDatabaseVtabData(&rc, &p->c, 
+  aData = bcvDatabaseVtabData(&rc, &p->c,
       zTab, zCont, zDb, bcvProxyClientCount, colUsed, &nData, &iVersion
   );
   if( 0==bcvStrcmp(zTab, "bcv_stat") ){
@@ -1896,8 +1896,8 @@ static void bdHandleVtab(
 ** Handle a message of type BCV_MESSAGE_HELLO from client pClient.
 */
 static void bdHandleHello(
-  DaemonCtx *p, 
-  DClient *pClient, 
+  DaemonCtx *p,
+  DClient *pClient,
   BcvMessage *pMsg
 ){
   const char *zCont = pMsg->u.hello.zContainer;
@@ -1970,7 +1970,7 @@ static void bdReadReplyError(
 static void bdHandleReadMsg(DaemonCtx *p, DClient *pClient);
 
 static void bdWriteBlock(
-  BcvCommon *pCommon, 
+  BcvCommon *pCommon,
   CacheEntry *pEntry
 ){
   int rc = SQLITE_OK;
@@ -1985,14 +1985,14 @@ static void bdWriteBlock(
 
 /*
 ** Write nData bytes of data from buffer aData[] to offset iOff of the
-** file opened by file descriptor pFd. If it is not NULL, encrypt the data 
+** file opened by file descriptor pFd. If it is not NULL, encrypt the data
 ** using pKey before writing it to disk.
 */
 static int bdWriteFile(
-  sqlite3_file *pFd, 
+  sqlite3_file *pFd,
   BcvIntKey *pKey,
-  const u8 *aData, 
-  int nData, 
+  const u8 *aData,
+  int nData,
   i64 iOff
 ){
   const int szChunk = 32768;      /* Any size acceptable to xWrite() */
@@ -2026,10 +2026,10 @@ static int bdWriteFile(
 }
 
 static void bdBlockDownloadCb(
-  void *pCtx, 
-  int errCode, 
-  char *zETag, 
-  const u8 *aData, 
+  void *pCtx,
+  int errCode,
+  char *zETag,
+  const u8 *aData,
   int nData,
   const u8 *aHdrs, int nHdrs
 ){
@@ -2125,8 +2125,8 @@ static CacheEntry *bdHashFind(
   CacheEntry *pEntry = bcvfsHashFind(pCommon, aName, nName);
   if( pEntry && pEntry->iEnc!=iEnc ){
     while( (pEntry = pEntry->pHashNext) ){
-      if( pEntry->iEnc==iEnc 
-       && pEntry->nName==nName 
+      if( pEntry->iEnc==iEnc
+       && pEntry->nName==nName
        && memcpy(pEntry->aName, aName, nName)
       ){
         break;
@@ -2144,7 +2144,7 @@ static void bdHandleReadMsg(DaemonCtx *p, DClient *pClient){
   CacheEntry *pEntry = 0;
 
   /* Check if the required block is already in the cache. There
-  ** are three possibilities: 
+  ** are three possibilities:
   **
   **   1) The block is not in the cache and is not currently being
   **      downloaded. In this case start the download.
@@ -2298,7 +2298,7 @@ static void bdPollCb(
     reply.u.error_r.zErrMsg = zErr;
     sqlite3_free(pClient->pMsg);
     pClient->pMsg = 0;
-    bdSendMsg(pClient->pCtx, pClient, &reply); 
+    bdSendMsg(pClient->pCtx, pClient, &reply);
   }
 
   sqlite3_free(zErr);
@@ -2331,7 +2331,7 @@ static void bdHandlePollCmdMsg(DaemonCtx *p, DClient *pClient){
 ** a READ or END message. Shuffle entries within the LRU list accordingly.
 */
 static void bdProcessMRUList(
-  DaemonCtx *p, 
+  DaemonCtx *p,
   DClient *pClient,
   u32 *aMru,
   int nMru
@@ -2352,16 +2352,16 @@ static void bdProcessMRUList(
 ** Handle a message of type BCV_MESSAGE_READ from client pClient.
 */
 static void bdHandleRead(
-  DaemonCtx *p, 
-  DClient *pClient, 
+  DaemonCtx *p,
+  DClient *pClient,
   BcvMessage *pMsg
 ){
   int rc = SQLITE_OK;
   char *zErr = 0;
 
   /* Take a reference to the container manifest if this is the first
-  ** READ message of the transaction. Or, if this is the second or 
-  ** subsequent request of the transaction, release all currently held 
+  ** READ message of the transaction. Or, if this is the second or
+  ** subsequent request of the transaction, release all currently held
   ** references.  */
   if( pClient->pMan==0 ){
     Manifest *pMan = pClient->pCont->pMan;
@@ -2383,7 +2383,7 @@ static void bdHandleRead(
 
   bdUpdateBCV(pClient, pMsg->u.read.zAuth);
 
-  /* If no error has occurred, try to handle the READ message now. 
+  /* If no error has occurred, try to handle the READ message now.
   ** Otherwise, return an error to the client.  */
   if( rc==SQLITE_OK ){
     pClient->pMsg = pMsg;
@@ -2397,8 +2397,8 @@ static void bdHandleRead(
 ** Handle a message of type BCV_MESSAGE_END from client pClient.
 */
 static void bdHandleEnd(
-  DaemonCtx *p, 
-  DClient *pClient, 
+  DaemonCtx *p,
+  DClient *pClient,
   BcvMessage *pMsg
 ){
   bdProcessMRUList(p, pClient, pMsg->u.end.aMru, pMsg->u.end.nMru);
@@ -2412,10 +2412,10 @@ static void bdHandleEnd(
 }
 
 static void bdPassCb(
-  void *pCtx, 
-  int errCode, 
-  char *zETag, 
-  const u8 *aData, 
+  void *pCtx,
+  int errCode,
+  char *zETag,
+  const u8 *aData,
   int nData,
   const u8 *aHdrs, int nHdrs
 ){
@@ -2442,21 +2442,21 @@ static void bdPassCb(
 ** Handle a PASS message from a client.
 */
 static void bdHandlePass(
-  DaemonCtx *p, 
-  DClient *pClient, 
+  DaemonCtx *p,
+  DClient *pClient,
   BcvMessage *pMsg
 ){
   BcvContainer *pBcv = 0;
   FetchCtx *pDLCtx = bdFetchCtx(pClient, 0);
- 
+
   pBcv = bdUpdateBCV(pClient, pMsg->u.pass.zAuth);
   bdDispatchFetch(p->pDisp, pBcv, BCV_MANIFEST_FILE, 0, 0, pDLCtx, bdPassCb);
   sqlite3_free(pMsg);
 }
 
 static void bdHandleClient(
-  DaemonCtx *p, 
-  DClient *pClient, 
+  DaemonCtx *p,
+  DClient *pClient,
   BcvMessage *pMsg
 ){
   BcvMessage reply;
@@ -2476,9 +2476,9 @@ static void bdSendPrefetchReply(DClient *pClient){
   int nOnDemand = 0;
 
   int rc = pClient->prefetch.errCode;
-  if( rc==SQLITE_OK 
-   && pClient->prefetch.nOutstanding==0 
-   && pClient->prefetch.iNext>=pClient->pManDb->nBlkLocal 
+  if( rc==SQLITE_OK
+   && pClient->prefetch.nOutstanding==0
+   && pClient->prefetch.iNext>=pClient->pManDb->nBlkLocal
   ){
     rc = SQLITE_DONE;
   }
@@ -2507,15 +2507,15 @@ static void bdSendPrefetchReply(DClient *pClient){
 }
 
 /*
-** This callback is invoked to announce that a block requested by 
+** This callback is invoked to announce that a block requested by
 ** bdHandlePrefetch() had finished downloading. Or that an error has occurred
 ** while attempting the same.
 */
 static void bdPrefetchCb(
-  void *pCtx, 
-  int errCode, 
-  char *zETag, 
-  const u8 *aData, 
+  void *pCtx,
+  int errCode,
+  char *zETag,
+  const u8 *aData,
   int nData,
   const u8 *aHdrs, int nHdrs
 ){
@@ -2558,8 +2558,8 @@ static void bdPrefetchCb(
 
 
 static void bdHandlePrefetch(
-  DaemonCtx *p, 
-  DClient *pClient, 
+  DaemonCtx *p,
+  DClient *pClient,
   BcvMessage *pMsg
 ){
   BcvContainer *pBcv = 0;
@@ -2607,7 +2607,7 @@ static void bdHandlePrefetch(
       pDL = bdFetchCtx(pClient, pEntry);
       bcvfsBlockidToText(pEntry->aName, nName, zName);
       bcvDispatchClientId(p->pDisp, "prefetch");
-      bcvDispatchLogmsg(p->pDisp, 
+      bcvDispatchLogmsg(p->pDisp,
           "prefetch %d of %s", iBlk, pClient->pManDb->zDName
       );
       bdDispatchFetch(p->pDisp, pBcv, zName, 0, 0, pDL, bdPrefetchCb);
@@ -2627,8 +2627,8 @@ static void bdHandlePrefetch(
 ** on a socket associated with client pClient.
 */
 static void bdHandleClientMessage(
-  DaemonCtx *p, 
-  DClient *pClient, 
+  DaemonCtx *p,
+  DClient *pClient,
   int *pbLogin                    /* Set to true if message is a LOGIN */
 ){
   BcvMessage *pMsg = 0;
@@ -2746,7 +2746,7 @@ static void bdMainloop(DaemonCtx *p){
       }
     }
 
-    /* Check if it is time to bail out (due to -autoexit option) */ 
+    /* Check if it is time to bail out (due to -autoexit option) */
     sqlite3_free(aWait);
     if( p->cmd.bAutoexit && bClient && p->pClientList==0 ){
       break;
@@ -2839,7 +2839,7 @@ static int main_daemon(int argc, char **argv){
     }
     sqlite3_free(zCacheFile);
   }
-  
+
 
   /* Write the "portnumber.bcv" file clients read to find the listening port */
   bdWritePortNumber(p, zFullDir);
@@ -2873,7 +2873,7 @@ static int main_daemon(int argc, char **argv){
   bdMainloop(p);
 
   /* The main loop has exited. Attempt to clean up all memory allocations,
-  ** then output an error message if this reveals that this process has 
+  ** then output an error message if this reveals that this process has
   ** leaked memory.  */
   bdCleanup(p);
   sqlite3_bcv_shutdown();

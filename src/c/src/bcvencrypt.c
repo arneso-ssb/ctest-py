@@ -4,7 +4,7 @@
 ******************************************************************************
 **
 ** This file contains the implementations of four functions used by this
-** project to encrypt and decrypt potentially sensitive database pages 
+** project to encrypt and decrypt potentially sensitive database pages
 ** stored on disk. The four functions are:
 **
 **   bcvEncryptionKeyNew:
@@ -16,7 +16,7 @@
 **
 **   bcvEncrypt:
 **     Encrypt a buffer using the supplied compiled key object.
-**   
+**
 **   bcvDecrypt:
 **     Decrypt a buffer using the supplied compiled key object.
 **
@@ -506,7 +506,7 @@ static void bcvRijndaelEncrypt128(const u32 *rk, const u8 pt[16], u8 ct[16]) {
 */
 static void bcvXorBuffers(u8 *out, u8 *a, u8 *b, int nByte){
   if( sizeof(a)==8
-   && (out - (u8*)0)%8==0 
+   && (out - (u8*)0)%8==0
    && (a - (u8*)0)%8==0
    && (b - (u8*)0)%8==0
   ){
@@ -611,5 +611,3 @@ int bcvDecrypt(
 ){
   return bcvEncrypt(pKey, aNonce, aData, nData);
 }
-
-

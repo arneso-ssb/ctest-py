@@ -28,9 +28,9 @@ typedef unsigned short u16;
 # define BCV_SOCKET_TYPE SOCKET
 #else
 # include <unistd.h>
-# include <sys/types.h> 
-# include <sys/socket.h> 
-# include <arpa/inet.h> 
+# include <sys/types.h>
+# include <sys/socket.h>
+# include <arpa/inet.h>
 # define BCV_SOCKET_TYPE int
 # define O_BINARY 0
 # define INVALID_SOCKET -1
@@ -51,7 +51,7 @@ typedef unsigned short u16;
 /* Number of bytes in the database id that is part of each db header */
 #define BCV_DBID_SIZE 16
 
-/* Space in bytes available within manifest file for database display 
+/* Space in bytes available within manifest file for database display
 ** name. This is the maximum length of the utf-8 version of a db name,
 ** including a nul-terminator.  */
 #define BCV_DBNAME_SIZE 128
@@ -86,7 +86,7 @@ typedef unsigned short u16;
 
 #define BCV_DEFAULT_NAMEBYTES        16
 #define BCV_DEFAULT_BLOCKSIZE        (4*1024*1024)
-#define BCV_DEFAULT_HTTPTIMEOUT 600  
+#define BCV_DEFAULT_HTTPTIMEOUT 600
 
 /* Size of local encryption keys in bytes. */
 #define BCV_LOCAL_KEYSIZE        16
@@ -171,7 +171,7 @@ struct ManifestDb {
 ** bDaemon:
 **   This is true if the object is part of a daemon process, false for
 **   a local read/write VFS.
-** 
+**
 ** pInsertBlock
 **   INSERT statement used for writing to the "block" table:
 **      REPLACE INTO block VALUES(?,?,?,?,?,?,?,?);
@@ -185,7 +185,7 @@ struct ManifestDb {
 **   CacheEntry structs, indexed by the block name of the block that
 **   the corresponding cache slot contains. The hash table contains
 **   any entry for each cache slot that (a) contains a valid block, or
-**   (b) is currently the target slot for an ongoing download of a new 
+**   (b) is currently the target slot for an ongoing download of a new
 **   block.
 **
 ** pUnused:
@@ -196,7 +196,7 @@ struct ManifestDb {
 **   be in the hash table or in this list, but not both.
 **
 ** nBlk:
-**   Size of cache file in blocks. This value should always be equal to 
+**   Size of cache file in blocks. This value should always be equal to
 **   the number of CacheEntry structs in the hash table and pUnused list
 **   combined. See function assert_no_cache_leaks().
 */
@@ -266,7 +266,7 @@ struct BcvWrapper {
 #define CONTAINER_STATE_DELETE        4
 
 /*
-** Each blocks in the cache-file is represented by an instance of the 
+** Each blocks in the cache-file is represented by an instance of the
 ** following type.
 **
 ** iEnc:
@@ -276,7 +276,7 @@ struct BcvWrapper {
 **   is necessary in case the same container is attached twice with different
 **   encryption schemes, or if somebody copies a cloud storage container -
 **   creating a separate container containing the same block ids.
-**   
+**
 */
 struct CacheEntry {
   int iPos;                       /* Position of block in cache file */
@@ -349,9 +349,9 @@ u64 bcvGetU64(const u8 *a);
 
 int bcvManifestParse(u8 *a, int n, char *zETag, Manifest **ppOut, char **pz);
 int bcvManifestParseCopy(
-  const u8 *a, int n, 
-  const char *zETag, 
-  Manifest **ppOut, 
+  const u8 *a, int n,
+  const char *zETag,
+  Manifest **ppOut,
   char **pz
 );
 i64 bcvManifestSize(Manifest*);
@@ -374,10 +374,10 @@ sqlite3 *bcvOpenAndInitDb(int *pRc, const char *zDir, char **pzErr);
 char *bcvGetFullpath(int *pRc, const char *zDir);
 int bcvfsCacheInit(BcvCommon *p, sqlite3 *db, char *zFullDir);
 Container *bcvContainerAlloc(
-  int*, BcvCommon*, 
-  const char *zStorage, 
-  const char *zAccount, 
-  const char *zContainer, 
+  int*, BcvCommon*,
+  const char *zStorage,
+  const char *zAccount,
+  const char *zContainer,
   const char *zAlias
 );
 Container *bcvfsFindContAlias(BcvCommon*, const char*, char **pzErr);
@@ -397,7 +397,7 @@ void bcvfsBlockidToText(const u8 *pBlk, int nBlk, char *aBuf);
 ManifestDb *bcvManifestDbidToDb(Manifest *p, i64 iDbId);
 void bcvfsLruAdd(BcvCommon *p, CacheEntry *pEntry);
 u8 *bcvDatabaseVtabData(
-    int*, BcvCommon*, const char*, const char*, const char*, 
+    int*, BcvCommon*, const char*, const char*, const char*,
     void(*xClientCount)(BcvCommon*,Container*,int,int*,int*,int*),
     u32, int*, int*
 );
@@ -411,7 +411,7 @@ u8 *bcvEmptyKV(int *pRc, int *pnData);
 int bcvfsCreateLocalDb(BcvCommon*, const char*, const char*, sqlite3_file**);
 
 /*
-** Below here should be eventually moved back to blockcachevfsd. 
+** Below here should be eventually moved back to blockcachevfsd.
 */
 void fatal_oom_error(void);
 
@@ -428,7 +428,7 @@ int bcvInstallBuiltinModules(void);
 **   environment variable, when the container is created.
 **
 ** zCainfo:
-**   This is set, based on the value of the CLOUDSQLITE_CAINFO environment 
+**   This is set, based on the value of the CLOUDSQLITE_CAINFO environment
 **   variable, when the container is created. If it is not NULL, it must
 **   be freed using sqlite3_free() when the BcvContainer object is freed.
 */
@@ -438,7 +438,7 @@ struct BcvContainer {
   int nContRef;
   int nMaxResults;                /* Value of maxresults= parameter */
 
-  int bRevokeBestEffort;       
+  int bRevokeBestEffort;
   char *zCainfo;
 };
 
@@ -626,7 +626,7 @@ struct BcvEndMsg {
   u32 *aMru;                      /* Most recently used array */
 };
 
-struct BcvCmdMsg { 
+struct BcvCmdMsg {
   const char *zAuth;
   u32 eCmd;
 };
@@ -674,7 +674,7 @@ struct BcvMessage {
 int bcvRecvMsg(BCV_SOCKET_TYPE fd, BcvMessage **ppMsg);
 int bcvSendMsg(BCV_SOCKET_TYPE fd, BcvMessage *pMsg);
 
-/* 
+/*
 ** Valid values for BcvMessage.
 */
 #define BCV_MESSAGE_HELLO          0x01      /* c->d   BcvHelloMsg */
@@ -717,7 +717,7 @@ void bcvLogDelete(BcvLog*);
 #define BCV_REQUEST_BCV_KV             /* GET a bcv.kv database file */
 
 int bcvLogRequest(
-  BcvLog *pLog, 
+  BcvLog *pLog,
   const char *zClientId,          /* Id of client that made this request */
   const char *zMsg,               /* Log message accompanying request */
   int eMethod,                    /* SQLITE_BCV_METHOD_* constant */

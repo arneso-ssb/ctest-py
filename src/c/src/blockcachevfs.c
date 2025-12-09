@@ -59,7 +59,7 @@ typedef struct Mutex Mutex;
 
 
 /*
-** Mutex/condition type. This type and its methods encapsulate the 
+** Mutex/condition type. This type and its methods encapsulate the
 ** platform dependent thread-related things in this file. Methods are:
 **
 **   bcvfsMutexInit()
@@ -95,7 +95,7 @@ struct BcvMRULink {
 **   Each time a new cache-file map is obtained from the daemon (either
 **   at the start of a read transaction or because a missing block was
 **   requested) a new, zeroed, array containing one entry for each block
-**   in the database is allocated here. 
+**   in the database is allocated here.
 **
 **   As the read operation progresses, the elements of the array are organized
 **   into a doubly-linked list in order from most-recently to least-recently
@@ -104,7 +104,7 @@ struct BcvMRULink {
 **   0 is interpreted as a pointer to aMRU[X-1].
 **
 ** iMRU:
-**   aMRU style "pointer" to element the of aMRU representing the most 
+**   aMRU style "pointer" to element the of aMRU representing the most
 **   recently used block. A value of 0 is a null pointer, any value X greater
 **   than 0 is interpreted as a pointer to aMRU[X-1].
 */
@@ -152,7 +152,7 @@ struct BcvKVStore {
 **   exclusive locks, only between locked and unlocked.
 **
 ** bHoldCkpt:
-**   If set, do not release the CHECKPOINTER lock in xShmLock when 
+**   If set, do not release the CHECKPOINTER lock in xShmLock when
 **   requested to. This is used as part of uploading databases.
 */
 struct BcvfsFile {
@@ -457,8 +457,8 @@ static void bcvfsPutEscaped(char **pz, const char *zIn){
 ** error code.
 */
 static int bcvfsDecodeName(
-  sqlite3_bcvfs *pFs, 
-  const char *zName, 
+  sqlite3_bcvfs *pFs,
+  const char *zName,
   BcvDbPath **pp
 ){
   int rc = SQLITE_OK;
@@ -521,8 +521,8 @@ static void bcvfsMaskLog(sqlite3_bcvfs *pFs, u32 mask, const char *zFmt, ...){
       bcvfsMaskLog(pFs, SQLITE_BCV_LOG_EVENT, zFmt, __VA_ARGS__)
 
 /*
-** Type passed between bcvfsFetchManifest() and callback function 
-** bcvfsFetchManifestCb() via the (void*) context pointer. 
+** Type passed between bcvfsFetchManifest() and callback function
+** bcvfsFetchManifestCb() via the (void*) context pointer.
 */
 typedef struct ManifestCb ManifestCb;
 struct ManifestCb {
@@ -535,8 +535,8 @@ struct ManifestCb {
 ** Fetch callback used by bcvfsFetchManifest().
 */
 static void bcvfsFetchManifestCb(
-  void *pCtx, 
-  int rc, char *zETag, 
+  void *pCtx,
+  int rc, char *zETag,
   const u8 *aData, int nData,
   const u8 *aHdrs, int nHdrs
 ){
@@ -554,13 +554,13 @@ static void bcvfsFetchManifestCb(
 
 /*
 ** Use the pDisp/pBcv dispatcher/container pair to download the manifest
-** file. If successful, deserialize it, store the result in output 
+** file. If successful, deserialize it, store the result in output
 ** variable (*ppMan) and return SQLITE_OK.
 **
-** Or, if an error occurs, set (*ppMan) to NULL and return either an SQLite 
+** Or, if an error occurs, set (*ppMan) to NULL and return either an SQLite
 ** or HTTPS error code. In this case, if pzErr is not NULL, then (*pzErr)
 ** may also be set to point to a buffer containing an error message. It
-** is the responsibility fo the caller to eventually free this buffer 
+** is the responsibility fo the caller to eventually free this buffer
 ** using sqlite3_free().
 */
 static int bcvfsFetchManifest(
@@ -576,7 +576,7 @@ static int bcvfsFetchManifest(
   if( rc==SQLITE_OK ){
     rc = bcvDispatchRunAll(pDisp);
   }
-  if( cb.pMan==0 && rc==SQLITE_OK ){ 
+  if( cb.pMan==0 && rc==SQLITE_OK ){
     rc = cb.rc;
   }
   assert( cb.pMan || rc!=SQLITE_OK );
@@ -586,8 +586,8 @@ static int bcvfsFetchManifest(
 }
 
 /*
-** Type passed between bcvfsFetchManifest() and callback function 
-** bcvfsFetchManifestCb() via the (void*) context pointer. 
+** Type passed between bcvfsFetchManifest() and callback function
+** bcvfsFetchManifestCb() via the (void*) context pointer.
 */
 typedef struct BlockCb BlockCb;
 struct BlockCb {
@@ -611,8 +611,8 @@ void bcvfsBlockidToText(const u8 *pBlk, int nBlk, char *aBuf){
 ** Fetch callback used by bcvfsFetchBlock().
 */
 static void bcvfsFetchBlockCb(
-  void *pCtx, 
-  int rc, char *zETag, 
+  void *pCtx,
+  int rc, char *zETag,
   const u8 *aData, int nData,
   const u8 *aHdrs, int nHdrs
 ){
@@ -628,13 +628,13 @@ static void bcvfsFetchBlockCb(
 
 /*
 ** Download the block specified by pEntry->aName to cache-file slot
-** pEntry->iPos. Return SQLITE_OK if successful, or an error code 
+** pEntry->iPos. Return SQLITE_OK if successful, or an error code
 ** otherwise.
 */
 static int bcvfsFetchBlock(
   BcvfsFile *pFile,
-  BcvDispatch *pDisp, 
-  BcvContainer *pBcv, 
+  BcvDispatch *pDisp,
+  BcvContainer *pBcv,
   int iBlk,
   CacheEntry *pEntry
 ){
@@ -650,7 +650,7 @@ static int bcvfsFetchBlock(
     pFs->nOnDemand++;
   } LEAVE_VFS_MUTEX;
 
-  rc = bcvDispatchLogmsg(pDisp, 
+  rc = bcvDispatchLogmsg(pDisp,
       "demand %d of %s", iBlk, pFile->pPath->zDatabase
   );
   if( rc==SQLITE_OK ){
@@ -873,7 +873,7 @@ void bcvfsLruRemoveIf(BcvCommon *p, CacheEntry *pEntry){
 }
 
 /*
-** The cache-entry passed as the second argument is guaranteed NOT to 
+** The cache-entry passed as the second argument is guaranteed NOT to
 ** be part of the LRU list of the VFS passed as the first argument. Add
 ** it to the list.
 */
@@ -965,9 +965,9 @@ void bcvfsEntryUnref(BcvCommon *p, CacheEntry *pEntry){
 ** passed as the second argument.
 */
 static int bcvfsWriteBlock(
-  sqlite3_bcvfs *pFs, 
-  BcvfsFile *pFile, 
-  int iBlk, 
+  sqlite3_bcvfs *pFs,
+  BcvfsFile *pFile,
+  int iBlk,
   CacheEntry *pEntry
 ){
   int rc = SQLITE_OK;
@@ -978,7 +978,7 @@ static int bcvfsWriteBlock(
   pStmt = pFs->c.pInsertBlock;
   sqlite3_bind_int(pStmt, 1, pEntry->iPos);
   if( pEntry->bDirty ){
-    sqlite3_bind_text(pStmt, 3, pFile->pCont->zName, -1, SQLITE_STATIC); 
+    sqlite3_bind_text(pStmt, 3, pFile->pCont->zName, -1, SQLITE_STATIC);
     sqlite3_bind_int64(pStmt, 4, pFile->iFileDbId);
     sqlite3_bind_int(pStmt, 5, iBlk);
     sqlite3_bind_int(pStmt, 6, 0);
@@ -1011,7 +1011,7 @@ CacheEntry *bcvfsAllocCacheEntry(int *pRc, BcvCommon *p){
       }
     }
   }
-  
+
   if( pRet==0 ){
     /* Allocate a new structure to represent the next free slot in the
     ** cache file. */
@@ -1027,9 +1027,9 @@ CacheEntry *bcvfsAllocCacheEntry(int *pRc, BcvCommon *p){
 }
 
 static int bcvfsCopyBlock(
-  BcvfsFile *pFile, 
-  i64 szBlk, 
-  int iTo, 
+  BcvfsFile *pFile,
+  i64 szBlk,
+  int iTo,
   int iFrom
 ){
   const static int nCopy = 32*1024;
@@ -1059,9 +1059,9 @@ static void bcvfsBlockidToName(const u8 *pBlk, int nBlk, char *aBuf){
   memcpy(&aBuf[nBlk*2], ".bcv", 5);
 }
 
-/* 
+/*
 ** If the file object does not already have an up to date reference to the
-** manifest for the current transaction, obtain one now. 
+** manifest for the current transaction, obtain one now.
 */
 static int bcvfsGetManifestRef(BcvfsFile *pFile, int errcode){
   int rc = SQLITE_OK;
@@ -1160,8 +1160,8 @@ static void bcvfsLogCb(void *pCtx, int bRetry, const char *zMsg){
 */
 static int bcvfsContainerGetBcv(
   sqlite3_bcvfs *pFs,
-  Container *pCont, 
-  BcvDispatch **ppDisp, 
+  Container *pCont,
+  BcvDispatch **ppDisp,
   BcvContainer **ppBcv,
   char **pzErr                    /* OUT: Error message (if not NULL) */
 ){
@@ -1201,16 +1201,16 @@ static int bcvfsContainerGetBcv(
   pWrapper = &pCont->aBcv[iFree];
 
   if( pFs->xAuth ){
-    bcvfsEventLog(pFs, "invoking xAuth(%s, %s, %s)", 
+    bcvfsEventLog(pFs, "invoking xAuth(%s, %s, %s)",
         pCont->zStorage, pCont->zAccount, pCont->zContainer
     );
-    rc = pFs->xAuth(pFs->pAuthCtx, 
+    rc = pFs->xAuth(pFs->pAuthCtx,
         pCont->zStorage, pCont->zAccount, pCont->zContainer, &zAuth
     );
   }
 
   if( rc==SQLITE_OK ){
-    rc = bcvContainerOpen(pCont->zStorage, pCont->zAccount, 
+    rc = bcvContainerOpen(pCont->zStorage, pCont->zAccount,
         zAuth, pCont->zContainer, &pWrapper->pBcv, &zErr
     );
   }
@@ -1244,12 +1244,12 @@ static int bcvfsContainerGetBcv(
 }
 
 /*
-** Release a BCV connection obtained using bcvfsContainerGetBcv(). The 
+** Release a BCV connection obtained using bcvfsContainerGetBcv(). The
 ** VFS mutex must be held to call this function.
 */
 static void bcvfsContainerReleaseBcv(
   sqlite3_bcvfs *pFs,
-  Container *pCont, 
+  Container *pCont,
   BcvDispatch *pDisp,
   BcvContainer *pBcv,
   int bError                      /* True if error has occurred */
@@ -1291,7 +1291,7 @@ static int bcvfsFindBlockForIO(
 
   if( iBlk<pManDb->nBlkLocal ){
     /* Look up the name of the block in the manifest. Then search the hash
-    ** table for it. There are then three possibilities:  
+    ** table for it. There are then three possibilities:
     **
     **   1) The block is found in the cache and can be used directly.
     **   2) An entry is found in the cache, but the block is still being
@@ -1320,7 +1320,7 @@ static int bcvfsFindBlockForIO(
         ** also using this cache entry - so it won't be on the LRU list. */
         bcvfsLruRemoveIf(pCommon, pEntry);
       }else{
-        /* Case 3. The block was not found in the cache. Instead, find a 
+        /* Case 3. The block was not found in the cache. Instead, find a
         ** slot in the cache file that the block can be downloaded to.  */
         pEntry = bcvfsAllocCacheEntry(&rc, pCommon);
 
@@ -1351,7 +1351,7 @@ static int bcvfsFindBlockForIO(
 }
 
 static int bcvfsMakeBlockWritable(
-  BcvfsFile *pFile, 
+  BcvfsFile *pFile,
   int iBlk,
   CacheEntry **ppEntry
 ){
@@ -1369,7 +1369,7 @@ static int bcvfsMakeBlockWritable(
       ** from this block. This means we cannot safely write to the block. Even
       ** though this thread holds the required SQLite locks to write, the block
       ** might be part of another database as well. So, in this case, make a
-      ** copy of the block to write to.  
+      ** copy of the block to write to.
       **
       ** If (pEntry->nPin>(iBlk>pManDb->nBlkPin)), then the cache-entry is
       ** a part of some pinned database other than this one. Make a copy of
@@ -1418,9 +1418,9 @@ static int bcvfsMakeBlockWritable(
 
 static int bcvfsReadWriteDatabase(
   int bWrite,                     /* True for write, false for read */
-  BcvfsFile *pFile, 
-  void *pBuf, 
-  int iAmt, 
+  BcvfsFile *pFile,
+  void *pBuf,
+  int iAmt,
   sqlite3_int64 iOfst
 ){
   sqlite3_bcvfs *pFs = pFile->pFs;
@@ -1434,8 +1434,8 @@ static int bcvfsReadWriteDatabase(
   BcvContainer *pBcv = 0;
   BcvDispatch *pDisp = 0;
 
-  /* When it opens a database, SQLite attempts to read the 100 byte 
-  ** database header without first taking a read-lock. This is an 
+  /* When it opens a database, SQLite attempts to read the 100 byte
+  ** database header without first taking a read-lock. This is an
   ** optimization only - the header has to be reread when the first
   ** transaction is opened anyway. So effectively ignore this read. */
   if( iOfst==0 && iAmt==100 ){
@@ -1450,9 +1450,9 @@ static int bcvfsReadWriteDatabase(
   **      the mutex is held, but holding the reference ensures that we can
   **      use the same manifest for the duration of the transaction.
   **
-  **   2) Find the block in the cache. Assuming no error occurs, there 
-  **      are two possibilities - the cache block already contains the 
-  **      required data (if pEntry->bValid==1), or it needs to be 
+  **   2) Find the block in the cache. Assuming no error occurs, there
+  **      are two possibilities - the cache block already contains the
+  **      required data (if pEntry->bValid==1), or it needs to be
   **      downloaded now (if pEntry->bValid==0).
   **
   **   3) If the cache block data needs to be downloaded, also obtain
@@ -1474,7 +1474,7 @@ static int bcvfsReadWriteDatabase(
   } LEAVE_VFS_MUTEX;
 
   /* If pBcv is not NULL, then this thread must download the block from cloud
-  ** storage. Note that while it is ok to read pEntry->bValid and other 
+  ** storage. Note that while it is ok to read pEntry->bValid and other
   ** fields here, it may not be set following a successful download.
   ** pEntry->bValid may not be set until the VFS mutex is held again.  */
   if( pBcv ){
@@ -1488,7 +1488,7 @@ static int bcvfsReadWriteDatabase(
   }
 
   /* Read or write the data from or to the appropriate page of the
-  ** cache file block.  
+  ** cache file block.
   */
   if( rc==SQLITE_OK ){
     sqlite3_file *pCF = pFile->pCacheFile;
@@ -1506,13 +1506,13 @@ static int bcvfsReadWriteDatabase(
   }
 
   ENTER_VFS_MUTEX; {
-    /* If the block was just downloaded and no error has occurred, write 
+    /* If the block was just downloaded and no error has occurred, write
     ** the entry to blocksdb.bcv. */
     if( rc==SQLITE_OK && bWriteBlock ){
       rc = bcvfsWriteBlock(pFs, pFile, iBlk, pEntry);
     }
 
-    /* Under cover of the VFS mutex, release the reference to the cache 
+    /* Under cover of the VFS mutex, release the reference to the cache
     ** entry used by this call.  */
     if( pEntry ){
       if( pEntry->bValid==0 ){
@@ -1531,7 +1531,7 @@ static int bcvfsReadWriteDatabase(
 
     }
     bcvfsContainerReleaseBcv(pFs, pFile->pCont, pDisp, pBcv, rc!=SQLITE_OK);
-  } LEAVE_VFS_MUTEX; 
+  } LEAVE_VFS_MUTEX;
 
   return rc;
 }
@@ -1545,15 +1545,15 @@ static int bcvErrorToSqlite(int errCode){
   if( rc==HTTP_AUTH_ERROR ){
     rc = SQLITE_IOERR_AUTH;
   }else if( rc>100 ){
-    rc = SQLITE_IOERR; 
+    rc = SQLITE_IOERR;
   }
   return rc;
 }
 
 static int bcvfsReadWriteDatabaseWithRetry(
   int bWrite,                     /* True for write, false for read */
-  BcvfsFile *pFile, 
-  void *pBuf, 
+  BcvfsFile *pFile,
+  void *pBuf,
   int iAmt,
   sqlite3_int64 iOfst
 ){
@@ -1589,7 +1589,7 @@ static const char *bcvfsProxyGetAuth(int *pRc, BcvfsFile *pFile){
   char *zRet = 0;
   if( *pRc==SQLITE_OK ){
     if( pFile->p.zAuth==0 ){
-      pFile->p.zAuth = bcvInvokeAuth(pRc, 
+      pFile->p.zAuth = bcvInvokeAuth(pRc,
           pFile->pFs, pFile->p.zStorage, pFile->p.zAccount, pFile->p.zContainer
       );
     }
@@ -1602,7 +1602,7 @@ static const char *bcvfsProxyGetAuth(int *pRc, BcvfsFile *pFile){
 /*
 ** Send the message pSend on socket s, and wait for a reply. If no error
 ** occurs and a reply is received, return it encoded as a BcvMessage
-** object. It is the responsibility of the caller to eventually free 
+** object. It is the responsibility of the caller to eventually free
 ** the returned object using sqlite3_free().
 **
 ** This function is a no-op if (*pRc) is other than SQLITE_OK when it is
@@ -1629,7 +1629,7 @@ static BcvMessage *bcvExchangeMessage(
 static int bcvfsProxyOpenTransaction(BcvfsFile *pFile, int iBlk){
   int rc = SQLITE_OK;
 
-  if( pFile->p.pMap==0 
+  if( pFile->p.pMap==0
    || iBlk>=pFile->p.pMap->u.read_r.nBlk
    || pFile->p.pMap->u.read_r.aBlk[iBlk]==0
   ){
@@ -1642,7 +1642,7 @@ static int bcvfsProxyOpenTransaction(BcvfsFile *pFile, int iBlk){
       /* This is either the first iteration of this loop (if rc==SQLITE_OK),
       ** or an iteration following a 403 error from the daemon. In the
       ** latter case, free both the reply message from the previous iteration
-      ** and the cached authentication string. This forces the 
+      ** and the cached authentication string. This forces the
       ** bcvfsProxyGetAuth() call below to invoke the authentication callback
       ** to obtain new credentials from the application. */
       assert( (rc==SQLITE_OK && pNew==0) || (rc==HTTP_AUTH_ERROR && pNew) );
@@ -1725,8 +1725,8 @@ static void bcvfsProxyDecrypt(
 */
 static int bcvfsProxyRead(
   BcvfsFile *pFile,
-  void *pBuf, 
-  int iAmt, 
+  void *pBuf,
+  int iAmt,
   sqlite3_int64 iOfst
 ){
   int rc = SQLITE_OK;
@@ -1765,9 +1765,9 @@ static int bcvfsProxyRead(
 }
 
 static int bcvfsNoFileRead(
-  sqlite3_file *pFd, 
-  void *pBuf, 
-  int iAmt, 
+  sqlite3_file *pFd,
+  void *pBuf,
+  int iAmt,
   sqlite3_int64 iOfst
 ){
   unsigned char nofile_db[] = {
@@ -1789,9 +1789,9 @@ static int bcvfsNoFileRead(
 
 
 static int bcvfsRead(
-  sqlite3_file *pFd, 
-  void *pBuf, 
-  int iAmt, 
+  sqlite3_file *pFd,
+  void *pBuf,
+  int iAmt,
   sqlite3_int64 iOfst
 ){
   int rc = SQLITE_OK;
@@ -1820,8 +1820,8 @@ static int bcvfsRead(
 
 static int bcvfsWrite(
   sqlite3_file *pFd,
-  const void *pBuf, 
-  int iAmt, 
+  const void *pBuf,
+  int iAmt,
   sqlite3_int64 iOfst
 ){
   int rc = SQLITE_OK;
@@ -1852,8 +1852,8 @@ static int bcvfsWrite(
 ** in the database.
 */
 static void bcvfsUndirtyBlocks(
-  sqlite3_bcvfs *pFs, 
-  int nName, 
+  sqlite3_bcvfs *pFs,
+  int nName,
   ManifestDb *pDb,
   int iFirst
 ){
@@ -1971,13 +1971,13 @@ static int bcvfsCheckReservedLock(sqlite3_file *pFd, int *pResOut){
 ** manifest.
 */
 int bcvManifestInstall(
-  BcvCommon *p, 
-  Container *pCont, 
+  BcvCommon *p,
+  Container *pCont,
   Manifest *pMan
 ){
   sqlite3_stmt *pInsert = p->pInsertCont;
   int rc = SQLITE_OK;
-  
+
   assert( p->szBlk==0 || pMan->szBlk==p->szBlk );
 
   if( pCont->pKey==0 ){
@@ -2041,7 +2041,7 @@ struct UploadCtx {
 
 /*
 ** A linked list of these structures is accumulated while uploading. Once
-** the upload has successfully completed and the new manifest installed, 
+** the upload has successfully completed and the new manifest installed,
 ** it is used to rename existing cache entries to their new names. And
 ** to mark them as non-dirty.
 */
@@ -2090,7 +2090,7 @@ static int bcvfsUploadManifest(
   if( aMan==0 ){
     rc = SQLITE_NOMEM;
   }else{
-    rc = bcvDispatchPut(pDisp, pBcv, BCV_MANIFEST_FILE, 
+    rc = bcvDispatchPut(pDisp, pBcv, BCV_MANIFEST_FILE,
         pMan->zETag, aMan, nMan, (void*)&ctx, bcvfsUploadManDone
     );
   }
@@ -2215,8 +2215,8 @@ static void bcvfsWalChecksum(
 
 
 /*
-** Buffer aIn[] contains an 8-byte checksum - two 32-bit big-endian 
-** values. This function compares the two values to arguments cksum1 
+** Buffer aIn[] contains an 8-byte checksum - two 32-bit big-endian
+** values. This function compares the two values to arguments cksum1
 ** and cksum2, returning 0 if they match or non-zero if they do not.
 */
 static int bcvfsCompareCksum(const u8 *aIn, u32 cksum1, u32 cksum2){
@@ -2343,8 +2343,8 @@ static void bcvBufferAppendEscaped(int *pRc, BcvBuffer *pBuf, const char *zStr){
 ** is eventually freed using sqlite3_free().
 */
 static char *bcvfsLocalPath(
-  int *pRc, 
-  sqlite3_bcvfs *pFs, 
+  int *pRc,
+  sqlite3_bcvfs *pFs,
   BcvDbPath *pPath,
   int bReadonlyShm
 ){
@@ -2391,7 +2391,7 @@ struct BcvfsWalIndexHdr {
 **
 **   *  corresponds to an empty wal file - one with zero frames, and
 **
-**   *  sets the change-counter to a random value to ensure any 
+**   *  sets the change-counter to a random value to ensure any
 **      existing users purge their page caches when they read the new
 **      header.
 */
@@ -2451,7 +2451,7 @@ int bcvfsCreateLocalDb(
     rc = pFd->pMethods->xWrite(pFd, (void*)"daemon", 5, 0);
   }
   if( rc==SQLITE_OK ){
-    rc = pFd->pMethods->xShmMap(pFd, 0, 32*1024, 1, (volatile void**)&aMap); 
+    rc = pFd->pMethods->xShmMap(pFd, 0, 32*1024, 1, (volatile void**)&aMap);
     if( rc==SQLITE_OK ){
       bcvfsEmptyWalIndexHdr(aMap);
     }
@@ -2473,8 +2473,8 @@ int bcvfsCreateLocalDb(
 ** sqlite3_free().
 */
 static char *bcvfsLocalName(
-  int *pRc, 
-  Container *pCont, 
+  int *pRc,
+  Container *pCont,
   const char *zDName,
   int bWal
 ){
@@ -2502,7 +2502,7 @@ struct FileWrapper {
 /*
 ** This function is a no-op if (*pRc) is set to other than SQLITE_OK when
 ** it is called. Otherwise, it attempts to allocate nIn bytes using
-** sqlite3_malloc(). If successful, it populates the new buffer with 
+** sqlite3_malloc(). If successful, it populates the new buffer with
 ** a copy of buffer pIn and returns a pointer to it. Or, if the allocation
 ** fails, it sets (*pRc) to SQLITE_NOMEM and returns NULL.
 */
@@ -2528,7 +2528,7 @@ static void *bcvMallocCopy(int *pRc, void *pIn, int nIn){
 ** This function takes ownership of pMan. If it does not install it into
 ** the container, it calls bcvManifestDeref() to decrement the ref-count.
 **
-** A manifest can be installed unless it contains changes that conflict 
+** A manifest can be installed unless it contains changes that conflict
 ** with local changes. Specifically, the manifest may not be installed
 ** if any of the following are true:
 **
@@ -2541,15 +2541,15 @@ static void *bcvMallocCopy(int *pRc, void *pIn, int nIn){
 **   3) A database that has been created remotely has the same display
 **      name as one that has been created locally.
 **
-**   4) One or more blocks in the aBlkOrig[] array used used by a database 
+**   4) One or more blocks in the aBlkOrig[] array used used by a database
 **      created locally are not currently in use by any other database
 **      (that was not also created locally).
 **
-** If any of the above are true one or more databases, the manifest 
-** cannot be installed. Checking if the database has been modified locally 
+** If any of the above are true one or more databases, the manifest
+** cannot be installed. Checking if the database has been modified locally
 ** is done as follows:
 **
-**   i) Take the WRITER lock on the database. This ensures that the 
+**   i) Take the WRITER lock on the database. This ensures that the
 **      *-wal file cannot be modified. This lock is not released until
 **      all databases have been checked and the new manifest installed.
 **
@@ -2613,13 +2613,13 @@ int bcvManifestUpdate(
       nLocal++;
     }else
 
-    if( pNewDb==0 
-     || pNewDb->iDbId>pOldDb->iDbId 
-     || pNewDb->iVersion!=pOldDb->iVersion 
+    if( pNewDb==0
+     || pNewDb->iDbId>pOldDb->iDbId
+     || pNewDb->iVersion!=pOldDb->iVersion
     ){
       /* This branch is taken if database pOldDb has been deleted or
       ** modified by this manifest upgrade. Check to see if there have
-      ** been any local changes. If there have, the manifest update 
+      ** been any local changes. If there have, the manifest update
       ** cannot proceed. To check for local changes:
       **
       **   1) Check if there are any modified blocks.
@@ -2691,8 +2691,8 @@ int bcvManifestUpdate(
 
     if( rc==SQLITE_OK && bFail ){
       assert( rc==SQLITE_OK );
-      *pzErr = bcvMprintfRc(&rc, 
-          "cannot update manifest - write collision on database %s", 
+      *pzErr = bcvMprintfRc(&rc,
+          "cannot update manifest - write collision on database %s",
           pOldDb->zDName
       );
       rc = SQLITE_ERROR;
@@ -2708,12 +2708,12 @@ int bcvManifestUpdate(
       ManifestDb *pNewDb = &pMan->aDb[pMan->nDb++];
 
       assert( pOldDb->nBlkOrigAlloc || pOldDb->aBlkOrig==0 );
-      pNewDb->aBlkOrig = bcvMallocCopy(&rc, 
+      pNewDb->aBlkOrig = bcvMallocCopy(&rc,
           pOldDb->aBlkOrig, nName*pOldDb->nBlkOrig
       );
       pNewDb->nBlkOrigAlloc = pNewDb->nBlkOrig = pOldDb->nBlkOrig;
       if( pOldDb->nBlkLocalAlloc ){
-        pNewDb->aBlkLocal = bcvMallocCopy(&rc, 
+        pNewDb->aBlkLocal = bcvMallocCopy(&rc,
             pOldDb->aBlkLocal, nName*pOldDb->nBlkLocal
         );
         pNewDb->nBlkLocalAlloc = pOldDb->nBlkLocal;
@@ -2754,7 +2754,7 @@ int bcvManifestUpdate(
 /*
 ** Search the BcvCommon object passed as the first argument for a container
 ** object attached with the alias zAlias. If one is found, return a pointer to
-** it. Otherwise, return NULL. 
+** it. Otherwise, return NULL.
 **
 ** If no container is found and parameter pzErr is not NULL, set *pzErr
 ** to point to a buffer containing an English language error message.
@@ -2780,7 +2780,7 @@ Container *bcvfsFindContAlias(
 
 
 static int bcvfsPollContainer(
-  sqlite3_bcvfs *pFs, 
+  sqlite3_bcvfs *pFs,
   const char *zContainer,
   char **pzErr
 ){
@@ -2833,7 +2833,7 @@ static int bcvfsPollContainer(
 static int bcvfsPoll(BcvfsFile *pFile, char **pzErr){
   sqlite3 *db = *pFile->ppDb;
 
-  /* Cannot do a poll if there is an open read or write transaction on 
+  /* Cannot do a poll if there is an open read or write transaction on
   ** the file.  Return early if this is the case. */
   if( pFile->lockMask || 0==sqlite3_get_autocommit(db) ){
     return SQLITE_BUSY;
@@ -2937,10 +2937,10 @@ static int bcvfsDeviceCharacteristics(sqlite3_file *pFd){
   return pFile->pFile->pMethods->xDeviceCharacteristics(pFile->pFile);
 }
 static int bcvfsShmMap(
-  sqlite3_file *pFd, 
-  int iPg, 
-  int pgsz, 
-  int eMode, 
+  sqlite3_file *pFd,
+  int iPg,
+  int pgsz,
+  int eMode,
   void volatile **pp
 ){
   BcvfsFile *pFile = (BcvfsFile*)pFd;
@@ -2964,7 +2964,7 @@ static int bcvfsShmLock(sqlite3_file *pFd, int offset, int n, int flags){
   ** lock, then the lock is not actually released. Specifically, the
   ** bit in BcvfsFile.lockMask remains set and the underlying file is not
   ** unlocked. However, if there are no other locks on the file (there never
-  ** are) the manifest reference is still released.  
+  ** are) the manifest reference is still released.
   **
   ** The assert() verifies that if this is call to unlock CHECKPOINTER, it
   ** does not also unlock any other slots. */
@@ -2978,12 +2978,12 @@ static int bcvfsShmLock(sqlite3_file *pFd, int offset, int n, int flags){
     }
   }
 
-  /* If this is a daemon mode VFS and the lock just obtained was 
-  ** a SHARED lock on read-lock slot 0, send a READ message 
+  /* If this is a daemon mode VFS and the lock just obtained was
+  ** a SHARED lock on read-lock slot 0, send a READ message
   ** requesting block 0 to open a read-transction within the daemon. */
-  if( (flags & SQLITE_SHM_LOCK) 
+  if( (flags & SQLITE_SHM_LOCK)
    && pFile->p.fdProxy!=INVALID_SOCKET
-   && pFile->lockMask==0 
+   && pFile->lockMask==0
    && mask==(1<<iReadLock0)
   ){
     rc = bcvfsProxyOpenTransaction(pFile, 0);
@@ -2998,7 +2998,7 @@ static int bcvfsShmLock(sqlite3_file *pFd, int offset, int n, int flags){
       pFile->lockMask &= ~mask;
     }
 
-    if( (pFile->lockMask==0) 
+    if( (pFile->lockMask==0)
      || (pFile->bHoldCkpt && pFile->lockMask==(1<<iCkptLock))
     ){
       ENTER_VFS_MUTEX; {
@@ -3028,12 +3028,12 @@ static int bcvfsShmUnmap(sqlite3_file *pFd, int deleteFlag){
 }
 
 /*
-** Create local directory for the specified path, if it does not 
+** Create local directory for the specified path, if it does not
 ** already exist.
 */
 static void bcvfsCreateDir(
-  int *pRc, 
-  sqlite3_bcvfs *pFs, 
+  int *pRc,
+  sqlite3_bcvfs *pFs,
   Container *pCont,
   char **pzErr
 ){
@@ -3093,7 +3093,7 @@ static int bcvParseAddr(const char *zAddr, struct sockaddr_in *pAddr){
 
 /*
 ** Attempt to open a new socket connection to the IP:PORT in string
-** zAddr. If successful, set (*pSocket) to point to the new socket handle 
+** zAddr. If successful, set (*pSocket) to point to the new socket handle
 ** and return SQLITE_OK. Or, if an error occurs, return an SQLite error code.
 ** The final value of (*pSocket) is undefined in this case.
 */
@@ -3169,8 +3169,8 @@ static int bcvfsProxyConnect(
 }
 
 static int bcvfsOpenProxy(
-  sqlite3_bcvfs *pFs, 
-  BcvDbPath *pPath, 
+  sqlite3_bcvfs *pFs,
+  BcvDbPath *pPath,
   BcvfsFile *pFile
 ){
   int rc = SQLITE_OK;
@@ -3262,7 +3262,7 @@ static int bcvfsOpen(
 
   assert( (flags & SQLITE_OPEN_SUPER_JOURNAL)==0 );
 
-  if( (flags & SQLITE_OPEN_MAIN_JOURNAL) 
+  if( (flags & SQLITE_OPEN_MAIN_JOURNAL)
    || (pFs->zPortnumber && (flags & SQLITE_OPEN_WAL))
   ){
     flags &= ~(SQLITE_OPEN_MAIN_JOURNAL|SQLITE_OPEN_WAL);
@@ -3387,9 +3387,9 @@ static int bcvfsDelete(sqlite3_vfs *pVfs, const char *zPath, int dirSync){
 ** is available, or false otherwise.
 */
 static int bcvfsAccess(
-  sqlite3_vfs *pVfs, 
-  const char *zPath, 
-  int flags, 
+  sqlite3_vfs *pVfs,
+  const char *zPath,
+  int flags,
   int *pResOut
 ){
   int rc = SQLITE_OK;
@@ -3399,17 +3399,17 @@ static int bcvfsAccess(
 
 /*
 ** Populate buffer zOut with the full canonical pathname corresponding
-** to the pathname in zPath. For this VFS, the output is a simple copy 
+** to the pathname in zPath. For this VFS, the output is a simple copy
 ** of the input.
 */
 static int bcvfsFullPathname(
-  sqlite3_vfs *pVfs, 
-  const char *zPath, 
-  int nOut, 
+  sqlite3_vfs *pVfs,
+  const char *zPath,
+  int nOut,
   char *zOut
 ){
   int nCopy = bcvStrlen(zPath);
-  if( nCopy>(nOut-1) ){ 
+  if( nCopy>(nOut-1) ){
     return BCVFS_CANTOPEN;
   }
   memcpy(zOut, zPath, nCopy);
@@ -3427,7 +3427,7 @@ static void *bcvfsDlOpen(sqlite3_vfs *pVfs, const char *zPath){
 
 /*
 ** Populate the buffer zErrMsg (size nByte bytes) with a human readable
-** utf-8 string describing the most recent error encountered associated 
+** utf-8 string describing the most recent error encountered associated
 ** with dynamic libraries.
 */
 static void bcvfsDlError(sqlite3_vfs *pVfs, int nByte, char *zErrMsg){
@@ -3452,7 +3452,7 @@ static void bcvfsDlClose(sqlite3_vfs *pVfs, void *pHandle){
 }
 
 /*
-** Populate the buffer pointed to by zBufOut with nByte bytes of 
+** Populate the buffer pointed to by zBufOut with nByte bytes of
 ** random data.
 */
 static int bcvfsRandomness(sqlite3_vfs *pVfs, int nByte, char *zBufOut){
@@ -3461,7 +3461,7 @@ static int bcvfsRandomness(sqlite3_vfs *pVfs, int nByte, char *zBufOut){
 }
 
 /*
-** Sleep for nMicro microseconds. Return the number of microseconds 
+** Sleep for nMicro microseconds. Return the number of microseconds
 ** actually slept.
 */
 static int bcvfsSleep(sqlite3_vfs *pVfs, int nMicro){
@@ -3595,7 +3595,7 @@ int bcvfsCacheInit(BcvCommon *p, sqlite3 *db, char *zFullDir){
   int rc = SQLITE_OK;
   const char *zSql1 = "SELECT * FROM container";
   const char *zSql2 = "SELECT * FROM block ORDER BY cachefilepos";
-  const char *zSql4 = 
+  const char *zSql4 =
     "WITH ss(i) AS ("
     "  SELECT -1 UNION ALL SELECT i+1 FROM ss WHERE (i+1)<?"
     ") SELECT i FROM ss WHERE i>=0 AND NOT EXISTS ("
@@ -3635,7 +3635,7 @@ int bcvfsCacheInit(BcvCommon *p, sqlite3 *db, char *zFullDir){
     if( pCont==0 ) break;
     pCont->pNext = p->pCList;
     p->pCList = pCont;
-    
+
     rc = bcvManifestParseCopy(aMan, nMan, zETag, &pCont->pMan, &zErr);
     sqlite3_free(zErr);
   }
@@ -3682,7 +3682,7 @@ int bcvfsCacheInit(BcvCommon *p, sqlite3 *db, char *zFullDir){
           bcvfsManifestWrite(pManDb, iDbPos, pNew->aName, pNew->nName);
         }
       }
-      
+
       bcvfsHashAdd(p, pNew);
       p->nBlk = pNew->iPos + 1;
     }
@@ -3731,7 +3731,7 @@ sqlite3 *bcvOpenAndInitDb(int *pRc, const char *zDir, char **pzErr){
       rc = sqlite3_open_v2(zBlocksDb, &db, f, 0);
       sqlite3_free(zBlocksDb);
       if( rc==SQLITE_OK ){
-        rc = sqlite3_exec(db, 
+        rc = sqlite3_exec(db,
             "PRAGMA locking_mode = exclusive;"
             "PRAGMA synchronous = OFF;"
             "BEGIN EXCLUSIVE;"
@@ -3807,14 +3807,14 @@ static int bcvReadTextFile(const char *zFile, char **pzText){
 
 /*
 ** Look for a "portnumber.bcv" file. If one is found, read it and return its
-** contents in a buffer allocated by sqlite3_malloc(). 
+** contents in a buffer allocated by sqlite3_malloc().
 */
 static char *bcvReadPortnumber(int *pRc, const char *zDir){
   int rc = *pRc;
   sqlite3_vfs *pVfs = sqlite3_vfs_find(0);
   char *zFile = 0;
   char *zRet = 0;
-  
+
   zFile = bcvMprintfRc(&rc, "%s/%s", zDir, BCV_PORTNUMBER_FILE);
   if( zFile ){
     int bExists = 0;
@@ -3949,14 +3949,14 @@ int sqlite3_bcvfs_create(
   return rc;
 }
 
-/* 
+/*
 ** Return true in daemon mode, false otherwise.
 */
 int sqlite3_bcvfs_isdaemon(sqlite3_bcvfs *pFs){
   return (pFs->zPortnumber!=0);
 }
 
-/* 
+/*
 ** Free all BCV handles (or organize for the threads currently using
 ** them to free them when they are finished with them).
 */
@@ -4172,12 +4172,12 @@ int sqlite3_bcvfs_auth_callback(
 **   1) Allocate a container object, so that it can be used to allocate
 **      a BCV handle. The container object is not yet linked into the
 **      main list of containers, so there is no chance that some other
-**      thread will start using it before the initial manifest has been 
+**      thread will start using it before the initial manifest has been
 **      downloaded installed.
 **
 **   2) Fetch the manifest. This is done without the mutex.
 **
-**   3) Then, holding the mutex: If the manifest was successfully retrieved, 
+**   3) Then, holding the mutex: If the manifest was successfully retrieved,
 **      the block-size is Ok, and the container is not already attached,
 **      add it to the list of available containers.
 **
@@ -4440,7 +4440,7 @@ int sqlite3_bcvfs_detach(sqlite3_bcvfs *pFs, const char *zAlias, char **pzErr){
 /*
 ** Parameter zFile may be the file name of a block stored in the cloud
 ** storage container.
-*/ 
+*/
 int bcvfsNameToBlockid(Manifest *p, const char *zName, u8 *aBlk){
   int nName = strlen(zName);
   int nExpect = BCV_FSNAMEBYTES(NAMEBYTES(p));
@@ -4478,7 +4478,7 @@ static int bcvfsWalFileExists(
     *pRc = p->pVfs->xAccess(p->pVfs, zWal, SQLITE_ACCESS_EXISTS, &res);
   }
   bcvBufferZero(&b);
-  
+
   return (*pRc || res);
 }
 
@@ -4506,7 +4506,7 @@ static int proxyCmd(
     BcvMessage *pFinal = 0;       /* reply to CMD message */
     char *zAuth = 0;              /* Authorization string */
 
-    zAuth = bcvInvokeAuth(&rc, pFs, 
+    zAuth = bcvInvokeAuth(&rc, pFs,
         pReply->u.hello_r.zStorage,
         pReply->u.hello_r.zAccount,
         pReply->u.hello_r.zContainer
@@ -4603,8 +4603,8 @@ static void bcvfsUploadBlockDone(void *pArg, int rc, char *zETag){
 
 
 static void bcvfsUploadRecordAdd(
-  int *pRc, 
-  UploadCtx2 *pCtx, 
+  int *pRc,
+  UploadCtx2 *pCtx,
   const u8 *aOld,
   const u8 *aNew,
   int nName
@@ -4643,7 +4643,7 @@ static void bcvfsUploadDeleteBlockIf(UploadCtx2 *pCtx, int iBlk){
       char zBlock[BCV_MAX_FSNAMEBYTES];
       i64 t1 = pCtx->iDelTime - sqlite_timestamp();
       bcvfsBlockidToName(aOrig, nName, zBlock);
-      bcvfsCleanupLog(pFs, 
+      bcvfsCleanupLog(pFs,
           "adding %s to delete list (deletetime=%d.%.3ds from now)",
           zBlock, t1/1000, t1%1000
       );
@@ -4655,7 +4655,7 @@ static void bcvfsUploadDeleteBlockIf(UploadCtx2 *pCtx, int iBlk){
 /*
 ** Dispatch another block upload for the upload-context passed as the only
 ** argument. Or, if the next block to be uploaded is a duplicate of a block
-** already uploaded to cloud storage, set (*pbRetry) to non-zero and return 
+** already uploaded to cloud storage, set (*pbRetry) to non-zero and return
 ** without doing anything.
 */
 static void bcvfsUploadOneBlockTry(UploadCtx2 *pCtx, int *pbRetry){
@@ -4783,14 +4783,14 @@ static void bcvfsUploadOneBlock(UploadCtx2 *pCtx){
 ** installing it.
 */
 static int bcvfsManifestMergeAndInstall(
-  sqlite3_bcvfs *pFs, 
-  Container *pCont, 
+  sqlite3_bcvfs *pFs,
+  Container *pCont,
   UploadCtx2 *pCtx
 ){
   Manifest *pMan = pCtx->pMan;    /* New manifest object to update + install */
   int rc = SQLITE_OK;             /* Return code */
   int iDb;                        /* Iterator variable */
-  
+
   assert( pCont->pMan && pCtx->pMan );
   assert( pCont->eState==CONTAINER_STATE_UPLOAD );
 
@@ -4804,7 +4804,7 @@ static int bcvfsManifestMergeAndInstall(
         if( pCtx->aDb[iUp].pDb==pNew ) break;
       }
       if( iUp==pCtx->nDb ){
-        /* This branch is taken if pNew has dirty blocks but was not 
+        /* This branch is taken if pNew has dirty blocks but was not
         ** uploaded as part of the recently completed UPLOAD operation. */
         int nName = NAMEBYTES(pMan);
         if( pNew->nBlkLocalAlloc ){
@@ -4854,7 +4854,7 @@ static int bcvfsUpload(
     ctx.iDelTime = sqlite_timestamp();
 
     /* Put the container in UPLOAD state. Then duplicate the manifest file
-    ** and determine the set of databases that this call will attempt 
+    ** and determine the set of databases that this call will attempt
     ** to upload. Populate the aUp[] array with the same. */
     ENTER_VFS_MUTEX; {
       /* Find the container */
@@ -4870,10 +4870,10 @@ static int bcvfsUpload(
         ctx.aDb = bcvMallocRc(&rc, sizeof(UploadDb) * nDb);
         for(iDb=0; rc==SQLITE_OK && iDb<nDb; iDb++){
           ManifestDb *pDb = &pMan->aDb[iDb];
-          if( pDb->iDbId>=BCVFS_FIRST_LOCAL_ID 
-           || pDb->nBlkLocalAlloc 
+          if( pDb->iDbId>=BCVFS_FIRST_LOCAL_ID
+           || pDb->nBlkLocalAlloc
            || pDb->nBlkLocal==0             /* deleted db */
-           || bcvfsWalFileExists(&rc, &pFs->c, pCont->zLocalDir, pDb->zDName) 
+           || bcvfsWalFileExists(&rc, &pFs->c, pCont->zLocalDir, pDb->zDName)
           ){
             /* This database looks dirty. Add it to the ctx.aDb[] array. */
             if( dbPragma==0 || pDb->iDbId==pFilePragma->iFileDbId ){
@@ -4896,7 +4896,7 @@ static int bcvfsUpload(
     **   3) Call sqlite3_wal_checkpoint_v2(TRUNCATE).
     **
     ** Only if this succeeds for all databases will the upload take place.
-    ** At that point the CHECKPOINTER lock will still be held on all 
+    ** At that point the CHECKPOINTER lock will still be held on all
     ** databases that will be uploaded, preventing any client from modifying
     ** the database file itself.  */
     for(iDb=0; rc==SQLITE_OK && iDb<ctx.nDb; iDb++){
@@ -5067,8 +5067,8 @@ static int bcvfsUpload(
       } LEAVE_VFS_MUTEX;
     }
 
-    /* Clean up: release all CHECKPOINTER locks and close all database 
-    ** handles. Then free memory allocated for aDb[] and the last hash 
+    /* Clean up: release all CHECKPOINTER locks and close all database
+    ** handles. Then free memory allocated for aDb[] and the last hash
     ** table.  */
     for(iDb=0; iDb<ctx.nDb; iDb++){
       sqlite3 *db = ctx.aDb[iDb].db;
@@ -5111,13 +5111,13 @@ static int bcvfsUploadWithRetry(BcvfsFile *pFile, char **pzErr){
   if( pFile->lockMask || 0==sqlite3_get_autocommit(db) ){
     return SQLITE_BUSY;
   }
-  
+
   zDb = bcvfsFindDbName(&rc, pFile);
   if( rc==SQLITE_OK ){
     do{
       sqlite3_free(zErr);
       zErr = 0;
-      rc = bcvfsUpload(pFile->pFs, 
+      rc = bcvfsUpload(pFile->pFs,
           db, pFile, zDb, pFile->pCont->zName, 0, 0, &zErr
       );
     }while( rc==HTTP_AUTH_ERROR && (++iIter)<BCVFS_MAX_AUTH_RETRIES );
@@ -5150,7 +5150,7 @@ int sqlite3_bcvfs_copy(
   int rc = SQLITE_OK;
   char *zErr = 0;
 
-  if( pFs->zPortnumber ){ 
+  if( pFs->zPortnumber ){
     rc = SQLITE_READONLY;
     zErr = sqlite3_mprintf("vfs is readonly");
   }else{
@@ -5163,13 +5163,13 @@ int sqlite3_bcvfs_copy(
         ManifestDb *pTo = 0;      /* Copy to this db */
         u8 *aBlkOrig = 0;         /* Deep copy of pFrom->aBlkOrig */
         int nCopy;
-  
+
         bcvfsEnterState(pFs, pCont, CONTAINER_STATE_COPY);
-  
+
         pMan = pCont->pMan;
         pFrom = bcvfsFindDatabase(pMan, zFrom, -1);
         pTo = bcvfsFindDatabase(pMan, zTo, -1);
-  
+
         if( pFrom==0 || pFrom->nBlkLocal==0 ){
           rc = SQLITE_ERROR;
           zErr = sqlite3_mprintf("no such database: %s", zFrom);
@@ -5182,7 +5182,7 @@ int sqlite3_bcvfs_copy(
           rc = SQLITE_ERROR;
           zErr = sqlite3_mprintf("database %s already exists", zTo);
         }
-  
+
         if( rc==SQLITE_OK ){
           rc = bcvManifestDup(pMan, &pMan);
         }
@@ -5316,8 +5316,8 @@ int sqlite3_bcvfs_delete(
 ){
   int rc = SQLITE_OK;
   char *zErr = 0;
-  
-  if( pFs->zPortnumber ){ 
+
+  if( pFs->zPortnumber ){
     rc = SQLITE_READONLY;
   }else{
     rc = bcvfsDeleteDatabase(pFs, zCont, zDb, &zErr);
@@ -5336,7 +5336,7 @@ int sqlite3_bcvfs_delete(
 ** database, this function attempts to obtain and return a bcv handle
 ** and dispatcher for the container associated with the main database.
 ** If successful, SQLITE_OK is returned and output variables *ppDisp
-** and *ppBcv set to the dispatcher and bcv handle respectively. Or, 
+** and *ppBcv set to the dispatcher and bcv handle respectively. Or,
 ** if an error occurs, an SQLite error code is returned and the two
 ** output variables zeroed.
 **
@@ -5362,9 +5362,9 @@ int bcvfsGetBcv(sqlite3 *db, BcvDispatch **ppDisp, BcvContainer **ppBcv){
 ** Release a bcv handle obtained via an earlier call to bcvfsGetBcv().
 */
 void bcvfsReleaseBcv(
-  sqlite3 *db, 
-  BcvDispatch *pDisp, 
-  BcvContainer *pBcv, 
+  sqlite3 *db,
+  BcvDispatch *pDisp,
+  BcvContainer *pBcv,
   int bError
 ){
   BcvfsFile *pFile = 0;
@@ -5408,7 +5408,7 @@ struct PrefetchCtx {
 };
 
 /*
-** Allocate a new pre-fetch object. 
+** Allocate a new pre-fetch object.
 */
 int sqlite3_bcvfs_prefetch_new(
   sqlite3_bcvfs *pFs,
@@ -5480,10 +5480,10 @@ int sqlite3_bcvfs_prefetch_new(
 }
 
 static void bcvfsPrefetchCb(
-  void *pArg, 
-  int rc, 
-  char *zETag, 
-  const u8 *aData, 
+  void *pArg,
+  int rc,
+  char *zETag,
+  const u8 *aData,
   int nData,
   const u8 *aHdrs, int nHdrs
 ){
@@ -5573,14 +5573,14 @@ void bcvfsPrefetchRun(
     i64 tmEnd = tmNow + nMs;
     do {
       rc = bcvDispatchRun(p->pDisp, 0, 0, tmEnd-tmNow);
-    }while( rc==SQLITE_OK 
-         && p->nOutstanding==nOutstanding 
+    }while( rc==SQLITE_OK
+         && p->nOutstanding==nOutstanding
          && (tmNow = sqlite_timestamp())<tmEnd
     );
 
     if( SQLITE_OK==rc
-     && p->rc==HTTP_AUTH_ERROR 
-     && p->nAuthFailure<BCVFS_MAX_AUTH_RETRIES 
+     && p->rc==HTTP_AUTH_ERROR
+     && p->nAuthFailure<BCVFS_MAX_AUTH_RETRIES
      && SQLITE_OK==(rc = bcvDispatchRunAll(p->pDisp))
     ){
       sqlite3_free(p->zErr);
@@ -5615,7 +5615,7 @@ void bcvfsProxyPrefetchRun(
   do{
     bContinue = 0;
     if( p->zAuth==0 ){
-      p->zAuth = bcvInvokeAuth(&p->rc, p->pFs, 
+      p->zAuth = bcvInvokeAuth(&p->rc, p->pFs,
           p->pReply->u.hello_r.zStorage,
           p->pReply->u.hello_r.zAccount,
           p->pReply->u.hello_r.zContainer
@@ -5632,8 +5632,8 @@ void bcvfsProxyPrefetchRun(
 
     if( pReply ){
       assert( pReply->eType==BCV_MESSAGE_PREFETCH_REPLY );
-      if( pReply->u.prefetch_r.errCode==HTTP_AUTH_ERROR 
-       && (++iIter)<BCVFS_MAX_AUTH_RETRIES 
+      if( pReply->u.prefetch_r.errCode==HTTP_AUTH_ERROR
+       && (++iIter)<BCVFS_MAX_AUTH_RETRIES
       ){
         sqlite3_free(p->zAuth);
         p->zAuth = 0;
@@ -5679,7 +5679,7 @@ int sqlite3_bcvfs_prefetch_errcode(sqlite3_prefetch *p){
 }
 
 int sqlite3_bcvfs_prefetch_status(
-  sqlite3_prefetch *p, 
+  sqlite3_prefetch *p,
   int op,
   sqlite3_int64 *piVal
 ){
@@ -5744,7 +5744,7 @@ void sqlite3_bcvfs_prefetch_destroy(sqlite3_prefetch *p){
 **   1. Discard any dirty blocks from the cache,
 **   2. Truncate any *-wal files in the file-system.
 **   3. Install the old manifest (read from the blocksdb file).
-*/ 
+*/
 int sqlite3_bcvfs_revert(sqlite3_bcvfs *pFs, const char *zCont, char **pzErr){
   const char *zSql = "SELECT manifest, etag FROM container WHERE container=?";
   int rc = SQLITE_OK;
@@ -5855,7 +5855,7 @@ int sqlite3_bcvfs_revert(sqlite3_bcvfs *pFs, const char *zCont, char **pzErr){
       }
 
       /* If no error has occurred so far, discard all dirty blocks associated
-      ** with the container and truncate all wal files to zero bytes in 
+      ** with the container and truncate all wal files to zero bytes in
       ** size. */
       for(ii=0; rc==SQLITE_OK && ii<pMan->nDb; ii++){
         sqlite3_file *pFd = aWrap[ii].pWalFd;
@@ -5988,7 +5988,7 @@ struct bcv_database_vtab {
 };
 
 /*
-** Cursor types for the bcv_database, bcv_container, bcv_block and 
+** Cursor types for the bcv_database, bcv_container, bcv_block and
 ** bcv_stat tables, respectively.
 */
 typedef struct bcv_database_cursor bcv_database_cursor;
@@ -6010,7 +6010,7 @@ struct VtabBlob {
 **   process within the xFilter call. The message object contains a
 **   blob of data which itself consists of a series of message-format
 **   encoded nul-terminated strings and u32s (see functions
-**   bcvVtabExtractString and bcvVtabExtractU32). One set of the following 
+**   bcvVtabExtractString and bcvVtabExtractU32). One set of the following
 **   per row visited by the scan:
 **
 **     1) STRING value of "container" column,
@@ -6155,7 +6155,7 @@ static int bcvDatabaseVtabConnect(
 }
 
 /*
-** Implementation of xOpen() method for the four read-only virtual 
+** Implementation of xOpen() method for the four read-only virtual
 ** tables - bcv_container, bcv_database, bcv_stat and bcv_block.
 */
 static int bcvReadonlyVtabOpen(sqlite3_vtab_cursor **ppCur, int nByte){
@@ -6214,13 +6214,13 @@ static int bcvStatVtabClose(sqlite3_vtab_cursor *cur){
 /*
 ** Count the number of blocks belonging to database pDb that are present
 ** in cache pCommon. Return the result. Also, if pnDirty is not NULL,
-** set (*pnDirty) to the number of dirty blocks in the cache belonging 
+** set (*pnDirty) to the number of dirty blocks in the cache belonging
 ** to database pDb.
 */
 int bcvCountCached(
-  BcvCommon *pCommon, 
-  Manifest *pMan, 
-  ManifestDb *pDb, 
+  BcvCommon *pCommon,
+  Manifest *pMan,
+  ManifestDb *pDb,
   int *pnDirty
 ){
   const int nName = NAMEBYTES(pMan);
@@ -6660,13 +6660,13 @@ static int bcvStatVtabEof(sqlite3_vtab_cursor *cur){
 }
 
 /*
-** pFile is a file opened via a proxy VFS. This function sends a message 
+** pFile is a file opened via a proxy VFS. This function sends a message
 ** to the daemon process to fetch the data required for a "SELECT * FROM
 ** zVtab" query and returns the message.
 */
 static BcvMessage *bcvVtabFetchData(
   int *pRc,
-  BcvfsFile *pFile, 
+  BcvfsFile *pFile,
   const char *zVtab,
   const char *zCont,
   const char *zDb,
@@ -6701,9 +6701,9 @@ static BcvMessage *bcvVtabFetchData(
 ** Version of xClientCount for local VFS
 */
 static void bcvLocalClientCount(
-  BcvCommon *pCommon, 
-  Container *pCont, 
-  int iDbId, 
+  BcvCommon *pCommon,
+  Container *pCont,
+  int iDbId,
   int *pnClient,
   int *pnPrefetch,
   int *pnReader
@@ -6740,7 +6740,7 @@ static void bcvLocalClientCount(
 ** xFilter implentations for bcv_database and bcv_block.
 */
 static int bcvReadonlyVtabFilter(
-  sqlite3_vtab_cursor *cur, 
+  sqlite3_vtab_cursor *cur,
   int idxNum, const char *idxStr,
   int argc, sqlite3_value **argv
 ){
@@ -6783,8 +6783,8 @@ static int bcvReadonlyVtabFilter(
     }else{
       pCur->iVersion = BCV_VTAB_VERSION;
       ENTER_VFS_MUTEX; {
-        pCur->data.aData = bcvDatabaseVtabData(&rc, &pFs->c, 
-            pTab->zMod, zCont, zDb, 
+        pCur->data.aData = bcvDatabaseVtabData(&rc, &pFs->c,
+            pTab->zMod, zCont, zDb,
             bcvLocalClientCount,
             colUsed, &pCur->data.nData, &pCur->iVersion
         );
@@ -6800,7 +6800,7 @@ static int bcvReadonlyVtabFilter(
 
 
 static int bcvContainerVtabFilter(
-  sqlite3_vtab_cursor *cur, 
+  sqlite3_vtab_cursor *cur,
   int idxNum, const char *idxStr,
   int argc, sqlite3_value **argv
 ){
@@ -6833,7 +6833,7 @@ static int bcvContainerVtabFilter(
       }
     }else{
       int iVersion = BCV_VTAB_VERSION;
-      pCur->data.aData = bcvDatabaseVtabData(&rc, &pFile->pFs->c, 
+      pCur->data.aData = bcvDatabaseVtabData(&rc, &pFile->pFs->c,
           "bcv_container", zCont, 0, 0, colUsed, &pCur->data.nData, &iVersion
       );
       pCur->pFreeData = (void*)pCur->data.aData;
@@ -6922,7 +6922,7 @@ typedef struct bcv_log_csr bcv_log_csr;
 ** Virtual cursor type for bcv_kv.
 **
 ** pSelect:
-**   Compiled version of "SELECT rowid, name, value FROM kv" on the 
+**   Compiled version of "SELECT rowid, name, value FROM kv" on the
 **   kv database. Current row of this statement is the current row of
 **   the cursor. pSelect==0 means EOF.
 */
@@ -7051,7 +7051,7 @@ struct bcv_kv_vtab {
 ** Virtual cursor type for bcv_kv.
 **
 ** pSelect:
-**   Compiled version of "SELECT rowid, name, value FROM kv" on the 
+**   Compiled version of "SELECT rowid, name, value FROM kv" on the
 **   kv database. Current row of this statement is the current row of
 **   the cursor. pSelect==0 means EOF.
 */
@@ -7169,8 +7169,8 @@ u8 *bcvEmptyKV(int *pRc, int *pnData){
     sqlite3 *db = 0;
     int rc = sqlite3_open(":memory:", &db);
     if( rc==SQLITE_OK ){
-      rc = sqlite3_exec(db, 
-          "CREATE TABLE kv(i INTEGER PRIMARY KEY, k UNIQUE NOT NULL, v)", 
+      rc = sqlite3_exec(db,
+          "CREATE TABLE kv(i INTEGER PRIMARY KEY, k UNIQUE NOT NULL, v)",
           0, 0, 0
       );
     }
@@ -7211,8 +7211,8 @@ static const char *bcvNextField(const char *zIn){
 */
 static char *bcvReformatHttpDate(int *pRc, const char *zHttp){
   const char *azMonth[] = {
-    "", 
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+    "",
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
   };
 
@@ -7241,16 +7241,16 @@ static char *bcvReformatHttpDate(int *pRc, const char *zHttp){
   if( iMonth==sizeof(azMonth)/sizeof(azMonth[0]) ) return 0;
 
   /* todo! */
-  return bcvMprintfRc(pRc, 
+  return bcvMprintfRc(pRc,
       "%.*s-%02d-%.*s %.*s", nYear, zYear, iMonth, nDay, zDay, nTime, zTime
   );
 }
 
 static void bcvfsFetchKvCb(
-  void *pApp, 
-  int rc, 
-  char *zETag, 
-  const u8 *aData, 
+  void *pApp,
+  int rc,
+  char *zETag,
+  const u8 *aData,
   int nData,
   const u8 *aHdrs, int nHdrs
 ){
@@ -7271,10 +7271,10 @@ static void bcvfsFetchKvCb(
   }
 
   assert( p->pKv->zDate==0 && p->pKv->zLastModified==0 );
-  p->pKv->zDate = bcvReformatHttpDate(&p->rc, 
+  p->pKv->zDate = bcvReformatHttpDate(&p->rc,
       bcvRequestHeader(aHdrs, nHdrs, "date")
   );
-  p->pKv->zLastModified = bcvReformatHttpDate(&p->rc, 
+  p->pKv->zLastModified = bcvReformatHttpDate(&p->rc,
       bcvRequestHeader(aHdrs, nHdrs, "last-modified")
   );
 
@@ -7284,7 +7284,7 @@ static void bcvfsFetchKvCb(
     if( p->rc==SQLITE_OK ){
       p->pKv->zETag = bcvStrdupRc(&p->rc, zETag);
       if( p->rc==SQLITE_OK ){
-        p->rc = sqlite3_deserialize(db, "main", aCopy, nCopy, nCopy, 
+        p->rc = sqlite3_deserialize(db, "main", aCopy, nCopy, nCopy,
             SQLITE_DESERIALIZE_FREEONCLOSE|SQLITE_DESERIALIZE_RESIZEABLE
         );
         if( sqlite3_errcode(db) ) p->rc = sqlite3_errcode(db);
@@ -7329,7 +7329,7 @@ static int bcvKVStoreLoad(bcv_kv_vtab *pTab){
       fkv.pKv = &pFile->kv;
 
       ENTER_VFS_MUTEX; {
-        rc = bcvfsContainerGetBcv(pFs, pFile->pCont, &pDisp, &pBcv, 0); 
+        rc = bcvfsContainerGetBcv(pFs, pFile->pCont, &pDisp, &pBcv, 0);
       } LEAVE_VFS_MUTEX;
 
       if( rc==SQLITE_OK ){
@@ -7390,7 +7390,7 @@ static int bcvKVStorePush(bcv_kv_vtab *pTab){
       fkv.pKv = pKv;
 
       ENTER_VFS_MUTEX; {
-        rc = bcvfsContainerGetBcv(pFs, pFile->pCont, &pDisp, &pBcv, 0); 
+        rc = bcvfsContainerGetBcv(pFs, pFile->pCont, &pDisp, &pBcv, 0);
       } LEAVE_VFS_MUTEX;
 
       if( rc==SQLITE_OK ){
@@ -7399,7 +7399,7 @@ static int bcvKVStorePush(bcv_kv_vtab *pTab){
         if( aData==0 ){
           rc = SQLITE_NOMEM;
         }else{
-          rc = bcvDispatchPut(pDisp, pBcv, BCV_KV_FILE, 
+          rc = bcvDispatchPut(pDisp, pBcv, BCV_KV_FILE,
               pKv->zETag, aData, nData, (void*)&fkv, bcvfsPutKvCb
           );
         }
@@ -7432,7 +7432,7 @@ static int bcvKVStorePush(bcv_kv_vtab *pTab){
 }
 
 static int bcvFileVtabFilter(
-  sqlite3_vtab_cursor *cur, 
+  sqlite3_vtab_cursor *cur,
   int idxNum, const char *idxStr,
   int argc, sqlite3_value **argv
 ){
@@ -7519,13 +7519,13 @@ static void bcvBindValue(
   }
 }
 
-/* 
-** This function is the implementation of the xUpdate callback used by 
-** bcv_kv virtual tables. It is invoked by SQLite each time a row is 
+/*
+** This function is the implementation of the xUpdate callback used by
+** bcv_kv virtual tables. It is invoked by SQLite each time a row is
 ** to be inserted, updated or deleted.
 **
 ** A delete specifies a single argument - the rowid of the row to remove.
-** 
+**
 ** Update and insert operations pass:
 **
 **   1. The "old" rowid, or NULL.
@@ -7536,7 +7536,7 @@ static void bcvBindValue(
 static int bcvFileVtabUpdate(
   sqlite3_vtab *tab,
   int nVal,
-  sqlite3_value **apVal, 
+  sqlite3_value **apVal,
   sqlite3_int64 *piRowid
 ){
   bcv_kv_vtab *pTab = (bcv_kv_vtab*)tab;
@@ -7847,5 +7847,3 @@ int sqlite3_bcvfs_register_vtab(sqlite3 *db){
   }
   return rc;
 }
-
-

@@ -24,32 +24,32 @@ typedef struct sqlite3_bcv_request sqlite3_bcv_request;
 typedef struct sqlite3_bcv_job sqlite3_bcv_job;
 
 /*
-** Structure containing a pointer to each method required by a cloud 
+** Structure containing a pointer to each method required by a cloud
 ** storage module implementation.
 */
 struct sqlite3_bcv_module {
   int (*xOpen)(
     void *pCtx,
     const char **azParam,
-    const char *zUser, const char *zAuth, 
+    const char *zUser, const char *zAuth,
     const char *zContainer, sqlite3_bcv_container **pp,
     char **pzErrmsg
   );
   void (*xClose)(sqlite3_bcv_container*);
 
   void (*xFetch)(
-      sqlite3_bcv_container*, sqlite3_bcv_job*, 
+      sqlite3_bcv_container*, sqlite3_bcv_job*,
       const char *zFile,
       int flags, const void *zCond, int nCond
   );
   void (*xPut)(
-    sqlite3_bcv_container*, sqlite3_bcv_job*, 
-    const char *zFile, 
+    sqlite3_bcv_container*, sqlite3_bcv_job*,
+    const char *zFile,
     const unsigned char *zData, int nData,
     const char *zETag
   );
   void (*xDelete)(
-    sqlite3_bcv_container*, sqlite3_bcv_job*, 
+    sqlite3_bcv_container*, sqlite3_bcv_job*,
     const char *z, const char *zETag
   );
   void (*xList)(sqlite3_bcv_container*, sqlite3_bcv_job*);
@@ -64,8 +64,8 @@ struct sqlite3_bcv_module {
 #define BCV_MODULE_CONDITION_ETAG 0x02
 
 /*
-** Register a new cloud-storage module. SQLITE_OK is returned if the module 
-** is successfully registered, or an SQLite error code (e.g. SQLITE_NOMEM) 
+** Register a new cloud-storage module. SQLITE_OK is returned if the module
+** is successfully registered, or an SQLite error code (e.g. SQLITE_NOMEM)
 ** if an error occurs.
 */
 int sqlite3_bcv_create_module(
@@ -85,9 +85,9 @@ void sqlite3_bcv_shutdown();
 
 /*
 ** Create a new HTTP(S) request that will be issued when the current
-** cloud module method invocation or HTTP(S) callback returns. 
+** cloud module method invocation or HTTP(S) callback returns.
 **
-** The callback function specified by the third argument to this function 
+** The callback function specified by the third argument to this function
 ** is invoked when a reply to the HTTP(S) request is received, or when a
 ** network or other error occurs. When it is invoked, the callback function
 ** is passed a copy of the job handle, a copy of the request handle returned
@@ -175,7 +175,7 @@ void sqlite3_bcv_request_set_body(
 );
 
 /*
-** This function may be called on a request handle within its HTTP(S) 
+** This function may be called on a request handle within its HTTP(S)
 ** reply callback to determine success or failure of the request. If
 ** the request was successful (a reply with HTTP(S) status 2** was
 ** received), SQLITE_OK is returned. Otherwise, if an error occurs,
@@ -187,13 +187,13 @@ void sqlite3_bcv_request_set_body(
 **
 ** This function may only be called on a request handle from within its
 ** HTTP(S) reply callback (the callback specified as part of the
-** sqlite3_bcv_job_request() call that created it). The results of calling 
+** sqlite3_bcv_job_request() call that created it). The results of calling
 ** it at any other time are undefined.
 */
 int sqlite3_bcv_request_status(sqlite3_bcv_request*, const char **pzStatus);
 
 /*
-** This function may be called on a request handle within its HTTP(S) 
+** This function may be called on a request handle within its HTTP(S)
 ** reply callback to extract an HTTP(S) header from the reply. Parameter
 ** zHdr must point to a nul-terminated string containing the name of the
 ** requested header (e.g. "Content-Type"). If the HTTP(S) reply did not
@@ -205,7 +205,7 @@ int sqlite3_bcv_request_status(sqlite3_bcv_request*, const char **pzStatus);
 **
 ** This function may only be called on a request handle from within its
 ** HTTP(S) reply callback (the callback specified as part of the
-** sqlite3_bcv_job_request() call that created it). The results of calling 
+** sqlite3_bcv_job_request() call that created it). The results of calling
 ** it at any other time are undefined.
 */
 const char *sqlite3_bcv_request_header(sqlite3_bcv_request*, const char *zHdr);
@@ -213,7 +213,7 @@ const char *sqlite3_bcv_request_header(sqlite3_bcv_request*, const char *zHdr);
 const unsigned char *sqlite3_bcv_request_hdrs(sqlite3_bcv_request*, int *pn);
 
 /*
-** This function may be called on a request handle within its HTTP(S) 
+** This function may be called on a request handle within its HTTP(S)
 ** reply callback to obtain access to data contained in the body of the
 ** HTTP(S) reply. A pointer to a buffer containing the entire reply body
 ** is returned, and output variable (*pn) set to the size of the reply
@@ -221,7 +221,7 @@ const unsigned char *sqlite3_bcv_request_hdrs(sqlite3_bcv_request*, int *pn);
 **
 ** This function may only be called on a request handle from within its
 ** HTTP(S) reply callback (the callback specified as part of the
-** sqlite3_bcv_job_request() call that created it). The results of calling 
+** sqlite3_bcv_job_request() call that created it). The results of calling
 ** it at any other time are undefined.
 */
 const unsigned char *sqlite3_bcv_request_body(sqlite3_bcv_request*, int *pn);

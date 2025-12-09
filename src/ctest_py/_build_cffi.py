@@ -1,7 +1,8 @@
-from cffi import FFI
 import argparse
-from pathlib import Path
 import sys
+from pathlib import Path
+
+from cffi import FFI
 
 ffi = FFI()
 
@@ -43,8 +44,14 @@ def main() -> int:
     If --emit-c PATH is not provided, write the file next to this script as
     _curlcrypto.c.
     """
-    parser = argparse.ArgumentParser(description="Generate C source for the _curlcrypto CFFI module")
-    parser.add_argument("--emit-c", metavar="PATH", help="Output path for the generated C file (_curlcrypto.c)")
+    parser = argparse.ArgumentParser(
+        description="Generate C source for the _curlcrypto CFFI module"
+    )
+    parser.add_argument(
+        "--emit-c",
+        metavar="PATH",
+        help="Output path for the generated C file (_curlcrypto.c)",
+    )
     args = parser.parse_args()
 
     out_path = Path(args.emit_c) if args.emit_c else (base_dir / "_curlcrypto.c")

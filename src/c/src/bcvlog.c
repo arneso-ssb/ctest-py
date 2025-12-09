@@ -124,7 +124,7 @@ static void bcvLogEnforceLimits(BcvLog *pLog){
 ** Log an HTTP request.
 */
 int bcvLogRequest(
-  BcvLog *pLog, 
+  BcvLog *pLog,
   const char *zClientId,          /* Id of client that made this request */
   const char *zLogMsg,            /* Log message */
   int eMethod,                    /* SQLITE_BCV_METHOD_* constant */
@@ -253,11 +253,11 @@ int bcvLogGetData(BcvLog *pLog, BcvBuffer *pBuf){
 ** parameter to iVal.
 */
 void bcvLogConfig(BcvLog *pLog, int op, i64 iVal){
-  assert( 
+  assert(
       op==SQLITE_BCV_HTTPLOG_TIMEOUT
    || op==SQLITE_BCV_HTTPLOG_NENTRY
   );
-  
+
   if( pLog ){
     sqlite3_mutex_enter(pLog->mutex);
     if( op==SQLITE_BCV_HTTPLOG_TIMEOUT ){
@@ -271,7 +271,7 @@ void bcvLogConfig(BcvLog *pLog, int op, i64 iVal){
 }
 
 /*
-** Parameter iTime is a julian-day value multiplied by 86400000, as returned 
+** Parameter iTime is a julian-day value multiplied by 86400000, as returned
 ** by an SQLite VFS xCurrentTimeInt64() method. This function formats the
 ** time value as an ISO-8601 time string and writes the results into buffer
 ** zBuf. The caller is responsible for ensuring that zBuf is large enough.
@@ -306,10 +306,7 @@ void bcvTimeToString(i64 iTime, char *zBuf){
   iMin = s/60;
   iSec += s - iMin*60;
 
-  sqlite3_snprintf(64, zBuf, "%04d-%02d-%02d %02d:%02d:%02d.%03d", 
+  sqlite3_snprintf(64, zBuf, "%04d-%02d-%02d %02d:%02d:%02d.%03d",
       iYear, iMonth, iDay, iHour, iMin, iSec, (iTime % 1000)
   );
 }
-
-
-

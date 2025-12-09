@@ -229,7 +229,7 @@ void fatal_oom_error(void){
 }
 
 /*
-** Wrapper around sqlite3_mprintf() that calls fatal_oom_error() if an 
+** Wrapper around sqlite3_mprintf() that calls fatal_oom_error() if an
 ** OOM occurs.
 */
 char *bcvMprintf(const char *zFmt, ...){
@@ -340,7 +340,7 @@ void bcvBufferZero(BcvBuffer *p){
 }
 
 /*
-** Return a duplicate of the nIn byte buffer at aIn[]. It is the 
+** Return a duplicate of the nIn byte buffer at aIn[]. It is the
 ** responsibility of the caller to eventually free the returned buffer
 ** by passing a pointer to it to sqlite3_free().
 */
@@ -374,8 +374,8 @@ int bcv_isspace(char c){
   return (c==' ' || c=='\n' || c=='\r' || c=='\t');
 }
 
-/* 
-** Primitives to read and write 32-bit big-endian integers. 
+/*
+** Primitives to read and write 32-bit big-endian integers.
 */
 u32 bcvGetU16(const u8 *a){
   return ((u32)a[0] << 8) + ((u32)a[1] << 0);
@@ -387,7 +387,7 @@ void bcvPutU32(u8 *a, u32 iVal){
   a[3] = (iVal>> 0) & 0xFF;
 }
 u32 bcvGetU32(const u8 *a){
-  return ((u32)a[0] << 24) + ((u32)a[1] << 16) 
+  return ((u32)a[0] << 24) + ((u32)a[1] << 16)
        + ((u32)a[2] << 8) + ((u32)a[3] << 0);
 }
 void bcvPutU64(u8 *a, u64 iVal){
@@ -478,9 +478,9 @@ u8 *bcvMHashQuery(ManifestHash *pHash, u8 *aBlk, int nBlk){
 ** elements from the delete list.
 */
 int bcvMHashBuild(
-  Manifest *pMan, 
+  Manifest *pMan,
   int bDeleteList,
-  ManifestDb *pExclude, 
+  ManifestDb *pExclude,
   ManifestHash **ppHash
 ){
   int rc = SQLITE_OK;
@@ -506,8 +506,8 @@ int bcvMHashBuild(
       if( pPar==pExclude ) pPar = 0;
     }
     for(iBlk=0; iBlk<pDb->nBlkOrig; iBlk++){
-      if( !pPar 
-       || iBlk>=pPar->nBlkOrig 
+      if( !pPar
+       || iBlk>=pPar->nBlkOrig
        || memcmp(&pPar->aBlkOrig[iBlk*nName], &pDb->aBlkOrig[iBlk*nName], nName)
       ){
         nBlk++;
@@ -579,10 +579,10 @@ ManifestDb *bcvManifestDbidToDb(Manifest *p, i64 iDbId){
 ** MANIFEST FILE FORMAT VERSION 4
 **
 ** The manifest file format is an ad-hoc binary design. It does not use
-** XML or any other formatting convention. This is to keep it as compact 
+** XML or any other formatting convention. This is to keep it as compact
 ** as possible.
 **
-** All "integer" values mentioned below are unsigned values stored in 
+** All "integer" values mentioned below are unsigned values stored in
 ** big-endian format.
 **
 ** Part 1: Manifest Header
@@ -748,7 +748,7 @@ int bcvManifestParse(
 }
 
 /*
-** Return the number of bytes allocated for the manifest object, not 
+** Return the number of bytes allocated for the manifest object, not
 ** including malloc() overhead.
 */
 i64 bcvManifestSize(Manifest *pMan){
@@ -774,9 +774,9 @@ i64 bcvManifestSize(Manifest *pMan){
 }
 
 int bcvManifestParseCopy(
-  const u8 *a, int n, 
-  const char *zETag, 
-  Manifest **ppOut, 
+  const u8 *a, int n,
+  const char *zETag,
+  Manifest **ppOut,
   char **pz
 ){
   int rc = SQLITE_OK;
@@ -867,7 +867,7 @@ u8 *bcvManifestCompose(Manifest *p, int *pnOut){
       int iBlk;
       for(iBlk=0; iBlk<pDb->nBlkOrig; iBlk++){
         int iBOff = iBlk*NAMEBYTES(p);
-        if( iBlk>=pPar->nBlkOrig 
+        if( iBlk>=pPar->nBlkOrig
          || memcmp(&pDb->aBlkOrig[iBOff], &pPar->aBlkOrig[iBOff], NAMEBYTES(p))
         ){
           bcvPutU32(&aOut[nOut], iBlk);
@@ -935,7 +935,7 @@ Manifest *bcvManifestRef(Manifest *p){
 
 /*
 ** This function is a no-op if (*pRc) is not SQLITE_OK when it is called.
-** Otherwise, it reallocates the buffer used by (*pMan) so that 
+** Otherwise, it reallocates the buffer used by (*pMan) so that
 ** (*pMan)->aDb is large enough for nExtra more entries. If successful,
 ** (*pMan) points to the new manifest object after this function returns.
 ** Or, if the reallocation fails, then (*pMan) is left unchanged and (*pRc)
@@ -976,12 +976,12 @@ int bcvManifestDup(Manifest *p, Manifest **ppNew){
     for(i=0; rc==SQLITE_OK && i<pNew->nDb; i++){
       ManifestDb *pNewDb = &pNew->aDb[i];
       ManifestDb *pOldDb = &p->aDb[i];
-  
+
       pNewDb->iDbId = pOldDb->iDbId;
       pNewDb->iParentId = pOldDb->iParentId;
       memcpy(pNewDb->zDName, pOldDb->zDName, BCV_DBNAME_SIZE);
-  
-      assert( pOldDb->nBlkLocalAlloc>0 
+
+      assert( pOldDb->nBlkLocalAlloc>0
            || pOldDb->aBlkLocal==0
            || pOldDb->aBlkLocal==pOldDb->aBlkOrig
       );
@@ -1007,7 +1007,7 @@ int bcvManifestDup(Manifest *p, Manifest **ppNew){
       }
       pNewDb->iVersion = pOldDb->iVersion;
     }
-  
+
     if( p->nDelBlk ){
       nByte = p->nDelBlk * GCENTRYBYTES(p);
       pNew->aDelBlk = (u8*)bcvMallocRc(&rc, nByte);
@@ -1017,7 +1017,7 @@ int bcvManifestDup(Manifest *p, Manifest **ppNew){
         pNew->bDelFree = 1;
       }
     }
-  
+
     pNew->zETag = bcvStrdupRc(&rc, p->zETag);
     pNew->nRef = 1;
     if( rc!=SQLITE_OK ){
@@ -1038,10 +1038,10 @@ struct BcvFetchParsed {
 };
 
 static void xFetchParsed(
-  void *pApp, 
-  int rc, 
-  char *zETag, 
-  const u8 *aData, 
+  void *pApp,
+  int rc,
+  char *zETag,
+  const u8 *aData,
   int nData,
   const u8 *aHdrs, int nHdrs
 ){
@@ -1100,9 +1100,9 @@ struct ManifestCtx {
 };
 
 static void bcvManifestUploadParsedCb(
-  void *pApp, 
-  int rc, 
-  char *zErr 
+  void *pApp,
+  int rc,
+  char *zErr
 ){
   ManifestCtx *pCtx = (ManifestCtx*)pApp;
   if( rc==SQLITE_OK && pCtx->pMan ){
@@ -1139,8 +1139,8 @@ int bcvManifestUploadParsed(sqlite3_bcv *p, Manifest *pMan){
   if( aMan==0 ){
     p->errCode = SQLITE_NOMEM;
   }else{
-    int rc = bcvDispatchPut(p->pDisp, 
-        p->pCont, BCV_MANIFEST_FILE, pMan->zETag, aMan, nMan, 
+    int rc = bcvDispatchPut(p->pDisp,
+        p->pCont, BCV_MANIFEST_FILE, pMan->zETag, aMan, nMan,
         (void*)&ctx, bcvManifestUploadParsedCb
     );
     if( rc==SQLITE_OK ){
@@ -1371,7 +1371,7 @@ static void bcvUploadOneBlockRetry(BcvUploadJob *pJob, int *pbRetry){
 
     aBlk = &pDb->aBlkLocal[iBlk * NAMEBYTES(pMan)];
 
-    /* Read the block of data from the file into a buffer */ 
+    /* Read the block of data from the file into a buffer */
     nByte = pMan->szBlk;
     iReadOff = iBlk*pMan->szBlk;
     if( iReadOff+nByte>p->szFile ){
@@ -1379,7 +1379,7 @@ static void bcvUploadOneBlockRetry(BcvUploadJob *pJob, int *pbRetry){
     }
     rc = bcvReadfile(p->pFd, aSpace, nByte, iReadOff);
     if( rc!=SQLITE_OK ){
-      bcvApiError(pBcv, (rc & 0xFF), 
+      bcvApiError(pBcv, (rc & 0xFF),
           "failed to read %d bytes from offset %lld of file", nByte, iReadOff
       );
       return;
@@ -1409,7 +1409,7 @@ static void bcvUploadOneBlockRetry(BcvUploadJob *pJob, int *pbRetry){
 
     bcvBlockidToText(NAMEBYTES(pMan), aBlk, aBuf);
     rc = bcvDispatchPut(
-        pBcv->pDisp, pBcv->pCont, aBuf, 0, aSpace, pMan->szBlk, 
+        pBcv->pDisp, pBcv->pCont, aBuf, 0, aSpace, pMan->szBlk,
         pJob, bcvUploadOneBlockCb
     );
     if( rc!=SQLITE_OK ){
@@ -1436,7 +1436,7 @@ static void bcvUploadOneBlock(BcvUploadJob *pJob){
 static int bcvCheckDbname(sqlite3_bcv *p, const char *zRemote){
   int nRemote = bcvStrlen(zRemote);
   if( nRemote>=BCV_DBNAME_SIZE ){
-    return bcvApiError(p, SQLITE_ERROR, 
+    return bcvApiError(p, SQLITE_ERROR,
         "database name \"%s\" is too long (max = %d bytes)",
         zRemote, BCV_DBNAME_SIZE-1
     );
@@ -1490,13 +1490,13 @@ int sqlite3_bcv_upload(
 
   /* Open the database file to be uploaded. And read its size in bytes. */
   if( bcvOpenLocal(zLocal, 0, 1, &up.pFd) ){
-    bcvApiError(p, SQLITE_IOERR, 
+    bcvApiError(p, SQLITE_IOERR,
         "failed to open file \"%s\" for reading", zLocal
     );
     goto update_out;
   }
   if( SQLITE_OK!=up.pFd->pMethods->xFileSize(up.pFd, &up.szFile) ){
-    bcvApiError(p, SQLITE_IOERR, 
+    bcvApiError(p, SQLITE_IOERR,
         "failed to read size of file \"%s\" - %s\n", zLocal
     );
     goto update_out;
@@ -1550,7 +1550,7 @@ int sqlite3_bcv_upload(
 }
 
 /*
-** This function is called when deleting a database from a manifest file, 
+** This function is called when deleting a database from a manifest file,
 ** either via sqlite3_bcv_delete() or sqlite3_bcvfs_delete(). It adds
 ** all blocks from database iDb to the delete-list of the manifest, with
 ** the current time as the timestamp.
@@ -1677,9 +1677,9 @@ struct BcvDownloadJob {
 };
 
 int bcvWritefile(
-  sqlite3_file *pFd, 
-  const u8 *aData, 
-  int nData, 
+  sqlite3_file *pFd,
+  const u8 *aData,
+  int nData,
   i64 iOff
 ){
   const int nMax = 32768;
@@ -1699,7 +1699,7 @@ static void bcvDownloadProgress(BcvDownload *p){
     i64 nByte = (i64)p->nDone * p->pMan->szBlk;
     i64 nTotal = (i64)p->pDb->nBlkLocal * p->pMan->szBlk;
     if( pBcv->xProgress(pBcv->pProgressCtx, nByte, nTotal) ){
-      bcvApiError(pBcv, 
+      bcvApiError(pBcv,
           SQLITE_ABORT, "abort requested by progress callback"
       );
     }
@@ -1708,9 +1708,9 @@ static void bcvDownloadProgress(BcvDownload *p){
 
 static void bcvDownloadOneFile(BcvDownloadJob *);
 static void bcvDownloadOneFileCb(
-  void *pApp, 
-  int errCode, 
-  char *zETag, 
+  void *pApp,
+  int errCode,
+  char *zETag,
   const u8 *aData,
   int nData,
   const u8 *aHdrs, int nHdrs
@@ -1766,8 +1766,8 @@ static void bcvDownloadOneFile(BcvDownloadJob *pJob){
 
       rc = bcvReadfile(p->pFd, p->aSpace, szBlk, iBlk*szBlk);
       if( rc!=SQLITE_OK ){
-        bcvApiError(pBcv, (rc & 0xFF), 
-            "failed to read %d bytes from offset %lld of file", 
+        bcvApiError(pBcv, (rc & 0xFF),
+            "failed to read %d bytes from offset %lld of file",
             szBlk, iBlk*szBlk
         );
         break;
@@ -1983,8 +1983,8 @@ static void bcvExtraLog(sqlite3_bcv *p, const char *zFmt, ...){
 }
 
 static void bcvExtraLogManifest(
-  sqlite3_bcv *p, 
-  const char *zCaption, 
+  sqlite3_bcv *p,
+  const char *zCaption,
   Manifest *pMan
 ){
   if( p->nLogLevel>=BCV_LOGLEVEL_DEBUG && p->pDisp->xLog ){
@@ -2040,7 +2040,7 @@ static void bcvfsInvokeProgress(sqlite3_bcv *p, i64 nDone, i64 nTotal){
   }
 }
 
-/* 
+/*
 ** This callback may be invoked one of three ways:
 **
 **     rc==SQLITE_OK, zFile!=0    ->    zFile is filename
@@ -2104,7 +2104,7 @@ static void bcvfsDeleteBlockDone(void *pArg, int rc, char *zErr){
   DeleteCtx *pCtx = (DeleteCtx*)pArg;
   sqlite3_bcv *p = pCtx->p;
 
-  pCtx->nProgressDone++; 
+  pCtx->nProgressDone++;
   if( p->errCode==SQLITE_OK && rc!=SQLITE_OK && rc!=HTTP_NOT_FOUND ){
     bcvApiError(p, rc, "delete block failed (%d) - %s", rc, zErr);
   }
@@ -2195,7 +2195,7 @@ int sqlite3_bcv_cleanup(sqlite3_bcv *p, int nSecond){
   if( p->bFindOrphans ){
     /* Build a hash table of all blocks in the manifest */
     p->errCode = bcvMHashBuild(ctx1.pMan, 1, 0, &ctx1.pHash);
-  
+
     /* Grab a list of files from the cloud container. Accumulate entries
     ** for any orphaned files in the ctx1.aDel array.  */
     if( p->errCode==SQLITE_OK ){
@@ -2204,8 +2204,8 @@ int sqlite3_bcv_cleanup(sqlite3_bcv *p, int nSecond){
         bcvDispatchRunAll(pDisp);
       }
     }
-  
-    /* If any orphaned blocks were found, add them to the manifest and 
+
+    /* If any orphaned blocks were found, add them to the manifest and
     ** upload it.  */
     if( p->errCode==SQLITE_OK && ctx1.nDel ){
       int nGC = GCENTRYBYTES(ctx1.pMan);
@@ -2220,7 +2220,7 @@ int sqlite3_bcv_cleanup(sqlite3_bcv *p, int nSecond){
         ctx1.pMan->nDelBlk = nNew;
         ctx1.pMan->bDelFree = 1;
         bcvManifestUploadParsed(p, ctx1.pMan);
-        bcvExtraLogManifest(p, 
+        bcvExtraLogManifest(p,
             "Manifest uploaded by cleanup to add stray blocks:", ctx1.pMan
         );
       }
@@ -2265,7 +2265,7 @@ int sqlite3_bcv_cleanup(sqlite3_bcv *p, int nSecond){
       }
       ctx2.aNew = 0;
       bcvManifestUploadParsed(p, ctx1.pMan);
-      bcvExtraLogManifest(p, 
+      bcvExtraLogManifest(p,
           "Manifest uploaded by cleanup to remove deleted blocks", ctx1.pMan
       );
     }
@@ -2352,11 +2352,11 @@ int sqlite3_bcv_create(sqlite3_bcv *p, int szName, int szBlock){
     if( aKV ){
       int rc;
       if( p->bTestNoKv==0 ){
-        rc = bcvDispatchPut(p->pDisp, 
+        rc = bcvDispatchPut(p->pDisp,
             p->pCont, BCV_KV_FILE, 0, aKV, nKV, (void*)p, bcvKVUploadCb
         );
       }else{
-        rc = bcvDispatchDelete(p->pDisp, 
+        rc = bcvDispatchDelete(p->pDisp,
             p->pCont, BCV_KV_FILE, 0, (void*)p, bcvKVUploadCb
         );
       }
@@ -2422,7 +2422,7 @@ void sqlite3_bcv_request_set_header(sqlite3_bcv_request *pReq, const char *z){
   }
 }
 void sqlite3_bcv_request_set_body(
-  sqlite3_bcv_request *pReq, 
+  sqlite3_bcv_request *pReq,
   const unsigned char *aBody,
   int nBody
 ){
@@ -2431,7 +2431,7 @@ void sqlite3_bcv_request_set_body(
 }
 
 int sqlite3_bcv_request_status(
-  sqlite3_bcv_request *pReq, 
+  sqlite3_bcv_request *pReq,
   const char **pzStatus
 ){
   long httpcode = 0;
@@ -2474,20 +2474,20 @@ const char *bcvRequestHeader(
 }
 
 const char *sqlite3_bcv_request_header(
-  sqlite3_bcv_request *pReq, 
+  sqlite3_bcv_request *pReq,
   const char *zHdr
 ){
   return bcvRequestHeader(pReq->hdr.aData, pReq->hdr.nData, zHdr);
 }
 const unsigned char *sqlite3_bcv_request_body(
-  sqlite3_bcv_request *pReq, 
+  sqlite3_bcv_request *pReq,
   int *pn
 ){
   *pn = pReq->body.nData;
   return pReq->body.aData;
 }
 const unsigned char *sqlite3_bcv_request_hdrs(
-  sqlite3_bcv_request *pReq, 
+  sqlite3_bcv_request *pReq,
   int *pn
 ){
   *pn = pReq->hdr.nData;
@@ -2495,8 +2495,8 @@ const unsigned char *sqlite3_bcv_request_hdrs(
 }
 
 void sqlite3_bcv_job_hdrs(
-  sqlite3_bcv_job *p, 
-  const unsigned char *pHdrs, 
+  sqlite3_bcv_job *p,
+  const unsigned char *pHdrs,
   int nHdrs
 ){
   sqlite3_free(p->aHdrs);
@@ -2508,8 +2508,8 @@ void sqlite3_bcv_job_hdrs(
 }
 
 void sqlite3_bcv_job_result(
-  sqlite3_bcv_job *p, 
-  const unsigned char *pData, 
+  sqlite3_bcv_job *p,
+  const unsigned char *pData,
   int nData
 ){
   switch( p->eType ){
@@ -2598,8 +2598,8 @@ static int bcvGlobalInit(void){
 }
 
 int bcvCreateModuleUnsafe(
-  const char *zName, 
-  sqlite3_bcv_module *pMod, 
+  const char *zName,
+  sqlite3_bcv_module *pMod,
   void *pCtx
 ){
   int nName = bcvStrlen(zName);
@@ -2629,8 +2629,8 @@ int bcvCreateModuleUnsafe(
 ** Create a new module.
 */
 int sqlite3_bcv_create_module(
-  const char *zName, 
-  sqlite3_bcv_module *pMod, 
+  const char *zName,
+  sqlite3_bcv_module *pMod,
   void *pCtx
 ){
   int rc;
@@ -2661,7 +2661,7 @@ void sqlite3_bcv_shutdown(){
 }
 
 static int bcvParseModuleName(
-  const char *zMod, 
+  const char *zMod,
   char ***pazField,
   char **pzErr                    /* OUT: error message */
 ){
@@ -2763,7 +2763,7 @@ int bcvContainerOpen(
         pNew->pMod = &pMod->mod;
         pNew->nContRef = 1;
         pNew->nMaxResults = BCV_MAX_RESULTS;
-        rc = pMod->mod.xOpen(pMod->pCtx, (const char**)&azField[1], 
+        rc = pMod->mod.xOpen(pMod->pCtx, (const char**)&azField[1],
             zUser, zSecret, zCont, &pNew->pCont, pzErr
         );
         if( rc!=SQLITE_OK ){
@@ -2889,16 +2889,16 @@ void bcvDispatchFree(BcvDispatch *p){
       bcvRequestListFree(pJob->pWaiting);
       bcvDispatchJobFree(pJob);
     }
-    
+
     curl_multi_cleanup(p->pMulti);
     sqlite3_free(p);
   }
 }
 
 static size_t bcvWriteFunction(
-  char *pData, 
-  size_t nSize, 
-  size_t nMember, 
+  char *pData,
+  size_t nSize,
+  size_t nMember,
   void *pCtx
 ){
   BcvDispatchReq *pReq = (BcvDispatchReq*)pCtx;
@@ -2908,9 +2908,9 @@ static size_t bcvWriteFunction(
 }
 
 static size_t bcvHeaderFunction(
-  char *pData, 
-  size_t nSize, 
-  size_t nMember, 
+  char *pData,
+  size_t nSize,
+  size_t nMember,
   void *pCtx
 ){
   BcvDispatchReq *pReq = (BcvDispatchReq*)pCtx;
@@ -2939,7 +2939,7 @@ static size_t bcvHeaderFunction(
 
 /*
 ** The following two functions are used as CURLOPT_READFUNCTION and
-** CURLOPT_SEEKFUNCTION callbacks when uploading a blob that is in 
+** CURLOPT_SEEKFUNCTION callbacks when uploading a blob that is in
 ** main memory (a manifest file). The context pointer points to an
 ** instance of type MemoryUpload.
 */
@@ -2960,7 +2960,7 @@ static void bcvDispatchLogRequest(BcvDispatch *p, BcvDispatchReq *pReq){
   const char *zUri = pReq->zUriLog ? pReq->zUriLog : pReq->zUri;
 
   assert( pReq->rc==SQLITE_OK );
-  pReq->rc = bcvLogRequest(p->pLog, pReq->pJob->zClientId, pReq->pJob->zLogmsg, 
+  pReq->rc = bcvLogRequest(p->pLog, pReq->pJob->zClientId, pReq->pJob->zLogmsg,
       pReq->eMethod, pReq->nRetry, zUri, &pReq->iLogId
   );
 
@@ -2971,7 +2971,7 @@ static void bcvDispatchLogRequest(BcvDispatch *p, BcvDispatchReq *pReq){
     if( pReq->nRetry>0 ){
       zRetry = sqlite3_mprintf(" (nRetry=%d)", pReq->nRetry);
     }
-    zMsg = sqlite3_mprintf("r%lld [%s] %s%s %s", 
+    zMsg = sqlite3_mprintf("r%lld [%s] %s%s %s",
       pReq->iLogId,
       pReq->pJob->zLogmsg,
       pReq->eMethod==SQLITE_BCV_METHOD_GET ? "GET" :
@@ -2987,9 +2987,9 @@ static void bcvDispatchLogRequest(BcvDispatch *p, BcvDispatchReq *pReq){
 }
 
 static void bcvDispatchLogReply(
-  BcvDispatch *p, 
-  BcvDispatchReq *pReq, 
-  int bRetry, 
+  BcvDispatch *p,
+  BcvDispatchReq *pReq,
+  int bRetry,
   int iDelay
 ){
   long httpcode = 0;
@@ -3012,10 +3012,10 @@ static void bcvDispatchLogReply(
       zRetry = sqlite3_mprintf(" (retry in %dms)", iDelay);
     }
     zMsg = sqlite3_mprintf("r%lld [%s] [%lldms] (http=%d) (rc=%d) %s%s%s%s%s",
-      pReq->iLogId, 
+      pReq->iLogId,
       pReq->pJob->zLogmsg,
       iMs,
-      httpcode, 
+      httpcode,
       res,
       zStatus,
       zETag ? " (eTag=" : "", zETag ? zETag : "", zETag ? ")" : "",
@@ -3030,7 +3030,7 @@ static void bcvDispatchLogReply(
 }
 
 /*
-** This is called after a cloud module function (either a method or callback) 
+** This is called after a cloud module function (either a method or callback)
 ** is called on a job. It does the following:
 **
 **   1) Issues any scheduled HTTPS requests.
@@ -3050,7 +3050,7 @@ static void bcvDispatchJobUpdate(BcvDispatchJob *pJob){
     BcvDispatchReq *pReq = *ppReq;
     CURL *pCurl = pReq->pCurl;
 
-    /* If iRetryTime is non-zero, do not issue this request until the 
+    /* If iRetryTime is non-zero, do not issue this request until the
     ** time according to sqlite_timestamp() is equal to or greater than
     ** the value.  */
     if( pJob->rc==SQLITE_OK && pReq->iRetryTime ){
@@ -3141,7 +3141,7 @@ static void bcvDispatchJobUpdate(BcvDispatchJob *pJob){
 
     switch( pJob->eType ){
       case BCV_DISPATCH_FETCH:
-        pJob->cb.xFetch(pApp, pJob->rc, 
+        pJob->cb.xFetch(pApp, pJob->rc,
             pJob->zETag, pJob->aResult, pJob->nResult, pJob->aHdrs, pJob->nHdrs
         );
         break;
@@ -3171,8 +3171,8 @@ static void bcvDispatchJobUpdate(BcvDispatchJob *pJob){
 
 
 static void bcvDispatchFail(
-  BcvDispatch *pDisp, 
-  int rc, 
+  BcvDispatch *pDisp,
+  int rc,
   const char *zErr
 ){
   while( pDisp->pJobList ){
@@ -3216,7 +3216,7 @@ static int bcvDispatchRetry(
 
   if( nRetry<sizeof(aMs)/sizeof(aMs[0])
    && ((eStatus/100)!=0 || eStatus==SQLITE_ERROR)
-   && (eStatus/100)!=2 
+   && (eStatus/100)!=2
    && (eStatus/100)!=3
    && eStatus!=HTTP_AUTH_ERROR
    && eStatus!=HTTP_BUSY_SNAPSHOT
@@ -3561,7 +3561,7 @@ int bcvDispatchList(
 }
 
 int bcvOpenLocal(
-  const char *zFile, 
+  const char *zFile,
   int bWal,                       /* Specify SQLITE_OPEN_WAL */
   int bReadonly,
   sqlite3_file **ppFd
@@ -3803,9 +3803,9 @@ void bcvBufferMsgString(int *pRc, BcvBuffer *p, const char *zStr){
 }
 
 void bcvBufferMsgBlob(
-  int *pRc, 
-  BcvBuffer *p, 
-  const u8 *aData, 
+  int *pRc,
+  BcvBuffer *p,
+  const u8 *aData,
   int nData
 ){
   bcvBufferAppendU32(pRc, p, (u32)nData);
@@ -3867,37 +3867,37 @@ int bcvSendMsg(BCV_SOCKET_TYPE fd, BcvMessage *pMsg){
       bcvBufferAppendU32(&rc, &buf, pMsg->u.hello_r.szBlk);
       bcvBufferAppendU32(&rc, &buf, pMsg->u.hello_r.bEncrypted);
       break;
-    case BCV_MESSAGE_READ: 
+    case BCV_MESSAGE_READ:
       bcvBufferAppendU32(&rc, &buf, pMsg->u.read.iBlk);
       bcvBufferMsgU32Array(&rc, &buf, pMsg->u.read.aMru, pMsg->u.read.nMru);
       bcvBufferMsgString(&rc, &buf, pMsg->u.read.zAuth);
       break;
-    case BCV_MESSAGE_READ_REPLY: 
+    case BCV_MESSAGE_READ_REPLY:
       bcvBufferAppendU32(&rc, &buf, pMsg->u.read_r.errCode);
       bcvBufferMsgString(&rc, &buf, pMsg->u.read_r.zErrMsg);
       bcvBufferMsgU32Array(&rc, &buf, pMsg->u.read_r.aBlk, pMsg->u.read_r.nBlk);
       break;
-    case BCV_MESSAGE_END: 
+    case BCV_MESSAGE_END:
       bcvBufferMsgU32Array(&rc, &buf, pMsg->u.end.aMru, pMsg->u.end.nMru);
       break;
-    case BCV_MESSAGE_CMD: 
+    case BCV_MESSAGE_CMD:
       bcvBufferMsgString(&rc, &buf, pMsg->u.cmd.zAuth);
       bcvBufferAppendU32(&rc, &buf, pMsg->u.cmd.eCmd);
       break;
-    case BCV_MESSAGE_PASS: 
+    case BCV_MESSAGE_PASS:
       bcvBufferMsgString(&rc, &buf, pMsg->u.cmd.zAuth);
       break;
-    case BCV_MESSAGE_PASS_REPLY: 
+    case BCV_MESSAGE_PASS_REPLY:
       bcvBufferAppendU32(&rc, &buf, pMsg->u.pass_r.errCode);
       bcvBufferMsgString(&rc, &buf, pMsg->u.pass_r.zErrMsg);
       bcvBufferAppendRc(&rc, &buf, pMsg->u.pass_r.aKey, BCV_LOCAL_KEYSIZE);
       break;
-    case BCV_MESSAGE_PREFETCH: 
+    case BCV_MESSAGE_PREFETCH:
       bcvBufferMsgString(&rc, &buf, pMsg->u.prefetch.zAuth);
       bcvBufferAppendU32(&rc, &buf, pMsg->u.prefetch.nRequest);
       bcvBufferAppendU32(&rc, &buf, pMsg->u.prefetch.nMs);
       break;
-    case BCV_MESSAGE_PREFETCH_REPLY: 
+    case BCV_MESSAGE_PREFETCH_REPLY:
       bcvBufferAppendU32(&rc, &buf, pMsg->u.prefetch_r.errCode);
       bcvBufferMsgString(&rc, &buf, pMsg->u.prefetch_r.zErrMsg);
       bcvBufferAppendU32(&rc, &buf, pMsg->u.prefetch_r.nOnDemand);
@@ -3908,7 +3908,7 @@ int bcvSendMsg(BCV_SOCKET_TYPE fd, BcvMessage *pMsg){
       assert( 0 );
       break;
   }
-  
+
   if( rc==SQLITE_OK ){
     bcvPutU32(&buf.aData[4], (u32)buf.nData-8);
     rc = bcv_send(fd, buf.aData, buf.nData);
@@ -3954,7 +3954,7 @@ static u32 *bcvMsgGetU32Array(u8 **pa, u32 *pnEntry){
 }
 
 int bcvRecvMsg(
-  BCV_SOCKET_TYPE fd, 
+  BCV_SOCKET_TYPE fd,
   BcvMessage **ppMsg
 ){
   BcvMessage *pMsg = 0;
@@ -4048,25 +4048,25 @@ int bcvRecvMsg(
           case BCV_MESSAGE_END:
             pMsg->u.end.aMru = bcvMsgGetU32Array(&aBody, &pMsg->u.end.nMru);
             break;
-          case BCV_MESSAGE_CMD: 
+          case BCV_MESSAGE_CMD:
             pMsg->u.cmd.zAuth = bcvMsgGetString(&aBody);
             pMsg->u.cmd.eCmd = bcvMsgGetU32(&aBody);
             break;
-    
-          case BCV_MESSAGE_PASS: 
+
+          case BCV_MESSAGE_PASS:
             pMsg->u.cmd.zAuth = bcvMsgGetString(&aBody);
             break;
-          case BCV_MESSAGE_PASS_REPLY: 
+          case BCV_MESSAGE_PASS_REPLY:
             pMsg->u.pass_r.errCode = bcvMsgGetU32(&aBody);
             pMsg->u.pass_r.zErrMsg = bcvMsgGetString(&aBody);
             pMsg->u.pass_r.aKey = aBody; /* aBody += BCV_LOCAL_KEYSIZE; */
             break;
-          case BCV_MESSAGE_PREFETCH: 
+          case BCV_MESSAGE_PREFETCH:
             pMsg->u.prefetch.zAuth = bcvMsgGetString(&aBody);
             pMsg->u.prefetch.nRequest = bcvMsgGetU32(&aBody);
             pMsg->u.prefetch.nMs = bcvMsgGetU32(&aBody);
             break;
-          case BCV_MESSAGE_PREFETCH_REPLY: 
+          case BCV_MESSAGE_PREFETCH_REPLY:
             pMsg->u.prefetch_r.errCode = bcvMsgGetU32(&aBody);
             pMsg->u.prefetch_r.zErrMsg = bcvMsgGetString(&aBody);
             pMsg->u.prefetch_r.nOnDemand = bcvMsgGetU32(&aBody);
@@ -4128,9 +4128,9 @@ void bcvIntEncryptionKeyFree(BcvIntKey *pKey){
 }
 
 int bcvIntDecrypt(
-  BcvIntKey *pKey, 
-  sqlite3_int64 iNonce, 
-  u8 *aNonce, 
+  BcvIntKey *pKey,
+  sqlite3_int64 iNonce,
+  u8 *aNonce,
   u8 *aData, int nData
 ){
   u64 aLocal[2] = {0, 0};
@@ -4140,9 +4140,9 @@ int bcvIntDecrypt(
 }
 
 int bcvIntEncrypt(
-  BcvIntKey *pKey, 
-  sqlite3_int64 iNonce, 
-  u8 *aNonce, 
+  BcvIntKey *pKey,
+  sqlite3_int64 iNonce,
+  u8 *aNonce,
   u8 *aData, int nData
 ){
   u64 aLocal[2] = {0, 0};
@@ -4150,5 +4150,3 @@ int bcvIntEncrypt(
   aLocal[1] ^= (u64)iNonce;
   return bcvEncrypt(pKey->pKey, (const u8*)aLocal, aData, nData);
 }
-
-
