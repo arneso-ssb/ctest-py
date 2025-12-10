@@ -1,6 +1,5 @@
 find_package(CURL REQUIRED)
 find_package(OpenSSL REQUIRED)
-find_package(SQLite3)
 
 add_library(curlcrypto SHARED
     src/curlcrypto.c
@@ -34,7 +33,6 @@ target_link_libraries(curlcrypto
         CURL::libcurl
         OpenSSL::SSL
         OpenSSL::Crypto
-#       SQLite::SQLite3
 )
 
 # Optional: Define a C test executable
