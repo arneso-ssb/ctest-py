@@ -1,8 +1,8 @@
-import ctypes
 import os
 import sqlite3
 import subprocess
 from functools import cache
+from typing import cast
 
 from google.auth import default
 from google.auth.credentials import Credentials
@@ -72,25 +72,27 @@ class CloudSqlite:
         # TODO fix this function. Unknown memory error
         raise NotImplementedError("This method needs more testing")
 
-        print("cleaning")
-        lib_path = os.path.abspath(__file__)
-        lib = ctypes.CDLL(os.path.dirname(lib_path) + "/exstension.so")
-        lib.clean.argtypes = []
-        lib.clean.restype = ctypes.c_void_p
-        lib.clean()
+        # print("cleaning")
+        # lib_path = os.path.abspath(__file__)
+        # lib = ctypes.CDLL(os.path.dirname(lib_path) + "/exstension.so")
+        # lib.clean.argtypes = []
+        # lib.clean.restype = ctypes.c_void_p
+        # lib.clean()
 
     @cache
     @staticmethod
     def _get_creds() -> tuple[str, str]:
         # Get default credentials and project ID
-        credentials, project_id = default()  # pyright: ignore
-        credentials: Credentials
-        project_id: str
+        credentials, project_id = cast(tuple[Credentials, str], default())  # type: ignore[no-untyped-call]
         # Refresh credentials to ensure token is valid
-        credentials.refresh(Request())
+        credentials.refresh(Request())  # type: ignore[no-untyped-call]
 
         # Extract the access token
-        access_token: str = credentials.token  # pyright: ignore
+        token = credentials.token
+        if token is None:
+            # Token may be None until credentials are refreshed/valid; treat as error in strict mode
+            raise RuntimeError("Failed to obtain access token from Google credentials")
+        access_token: str = token
 
         return access_token, project_id
 

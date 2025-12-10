@@ -1,6 +1,7 @@
 """ctest_py - Python bindings for the curlcrypto C library using CFFI."""
 
 from typing import Any
+from typing import cast
 
 from ._curlcrypto import ffi
 from ._curlcrypto import lib
@@ -15,7 +16,7 @@ def _decode(result: Any) -> str:
     """Convert a char* from C into a Python str safely."""
     if result == ffi.NULL:
         return ""
-    return ffi.string(result).decode("utf-8", errors="replace")
+    return cast(str, ffi.string(result).decode("utf-8", errors="replace"))
 
 
 def curl_version() -> str:
