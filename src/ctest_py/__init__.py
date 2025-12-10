@@ -1,6 +1,6 @@
 """ctest_py - Python bindings for the curlcrypto C library using CFFI."""
 
-from cffi.api import CData
+from typing import Any
 
 from ._curlcrypto import ffi
 from ._curlcrypto import lib
@@ -11,7 +11,7 @@ __all__ = [
 ]
 
 
-def _decode(result: CData) -> str:
+def _decode(result: Any) -> str:
     """Convert a char* from C into a Python str safely."""
     if result == ffi.NULL:
         return ""
