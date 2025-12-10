@@ -30,7 +30,7 @@
 
 ## Requirements
 
-- TODO
+- Curl and openssh libraries must be installed.
 
 ## Installation
 
@@ -58,6 +58,43 @@ _CTest Py_ is free and open source software.
 
 If you encounter any problems,
 please [file an issue] along with a detailed description.
+
+## Developer
+
+### Requirements
+
+- `cmake` must be installed
+
+### C-code
+
+Use the following commands to build, run and test the c-part of the library:
+
+```shell
+cd src
+mkdir build && cd build
+cmake .. -DBUILD_TESTING=ON
+cmake --build .
+ctest -V
+cmake --install . --prefix ..
+```
+
+If you geet errors about missing developement libraries for curl and openssh, you can
+install them like this:
+
+```shell
+sudo apt install libcurl4-openssl-dev
+sudo apt install libssl-dev
+```
+
+### Python-code
+
+Build the complete library with the commands:
+
+```shell
+poetry install
+poetry run python -m build
+```
+
 
 ## Credits
 
