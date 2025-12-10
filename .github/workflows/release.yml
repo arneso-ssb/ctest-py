@@ -30,6 +30,12 @@ jobs:
           pip install -c ${{ github.workspace }}/.github/workflows/constraints.txt pip
           pip --version
 
+      - name: Install system packages (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev pkg-config
+
       - name: Install Poetry
         run: |
           pipx install --pip-args "-c ${{ github.workspace }}/.github/workflows/constraints.txt" poetry

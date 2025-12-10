@@ -61,6 +61,10 @@ please [file an issue] along with a detailed description.
 
 ## Developer
 
+### Requirements
+
+- `cmake` must be installed
+
 ### C-code
 
 Use the following commands to build, run and test the c-part of the library:
