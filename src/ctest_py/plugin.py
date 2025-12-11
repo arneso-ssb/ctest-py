@@ -69,15 +69,8 @@ class CloudSqlite:
             NotImplementedError: If the method is called, indicating that
                 further testing and implementation are required.
         """
-        # TODO fix this function. Unknown memory error
-        raise NotImplementedError("This method needs more testing")
-
-        # print("cleaning")
-        # lib_path = os.path.abspath(__file__)
-        # lib = ctypes.CDLL(os.path.dirname(lib_path) + "/exstension.so")
-        # lib.clean.argtypes = []
-        # lib.clean.restype = ctypes.c_void_p
-        # lib.clean()
+        raise NotImplementedError("This method is not exposed yet")
+          
 
     @cache
     @staticmethod
