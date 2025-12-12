@@ -31,10 +31,14 @@ jobs:
           CIBW_BUILD: "cp311-manylinux_x86_64 cp312-manylinux_x86_64 cp313-manylinux_x86_64"
           CIBW_ARCHS_LINUX: "x86_64"
 
+          # Use manylinux_2_28 (AlmaLinux 8 based) for newer system libraries
+          # (libcurl >= 7.70 required for CURLSSLOPT_REVOKE_BEST_EFFORT, CURLINFO_RETRY_AFTER)
+          CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
+
           # Install system dependencies inside the manylinux container before building
           # Needed for the native extension build (OpenSSL, libcurl, and pkg-config)
           CIBW_BEFORE_ALL_LINUX: |
-            yum -y install openssl-devel libcurl-devel pkgconfig
+            dnf -y install openssl-devel libcurl-devel pkgconfig
 
           # Minimal import test for each built wheel
           CIBW_TEST_COMMAND: |
