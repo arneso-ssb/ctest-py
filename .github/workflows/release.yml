@@ -102,9 +102,9 @@ jobs:
           poetry version ${{ needs.prepare-version.outputs.version }}
           echo "Building sdist with version: $(poetry version | awk '{ print $2 }')"
 
-      - name: Build source distribution
-        run: |
-          poetry build --format sdist --ansi
+#      - name: Build source distribution
+#        run: |
+#          poetry build --format sdist --ansi
 
       - name: Download wheels
         uses: actions/download-artifact@v4
