@@ -1,6 +1,5 @@
 find_package(CURL REQUIRED)
 find_package(OpenSSL REQUIRED)
-find_package(SQLite3)
 
 add_library(curlcrypto SHARED
     src/curlcrypto.c
@@ -22,11 +21,11 @@ target_include_directories(curlcrypto
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-# Require C11 (recommended for modern C code)
+# Require C11 with GNU/POSIX extensions (needed for strdup, etc.)
 set_target_properties(curlcrypto PROPERTIES
     C_STANDARD 11
     C_STANDARD_REQUIRED ON
-    C_EXTENSIONS OFF
+    C_EXTENSIONS ON
 )
 
 target_link_libraries(curlcrypto
@@ -34,7 +33,6 @@ target_link_libraries(curlcrypto
         CURL::libcurl
         OpenSSL::SSL
         OpenSSL::Crypto
-#       SQLite::SQLite3
 )
 
 # Optional: Define a C test executable

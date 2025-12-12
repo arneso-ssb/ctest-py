@@ -1,0 +1,49 @@
+name: Build wheels
+
+on:
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  build-wheels:
+    name: linux x86_64 (cp311-cp313)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6.1.0
+        with:
+          python-version: "3.12"
+
+      - name: Build wheels with cibuildwheel
+        uses: pypa/cibuildwheel@v3.3.0
+        env:
+          # Build only CPython 3.11–3.13 manylinux wheels for x86_64
+          CIBW_BUILD: "cp311-manylinux_x86_64 cp312-manylinux_x86_64 cp313-manylinux_x86_64"
+          CIBW_ARCHS_LINUX: "x86_64"
+
+          # Use manylinux_2_34 (AlmaLinux 9 based) for newer system libraries
+          # (libcurl >= 7.70 required for CURLSSLOPT_REVOKE_BEST_EFFORT, CURLINFO_RETRY_AFTER)
+          CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_34
+
+          # Install system dependencies inside the manylinux container before building
+          # Needed for the native extension build (OpenSSL, libcurl, and pkg-config)
+          CIBW_BEFORE_ALL_LINUX: |
+            dnf -y install openssl-devel libcurl-devel pkgconfig
+
+          # Minimal import test for each built wheel
+          CIBW_TEST_COMMAND: |
+            python -c "import ctest_py; print(ctest_py.curl_version())"
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v5
+        with:
+          name: wheels-linux-x86_64
+          path: wheelhouse/*.whl

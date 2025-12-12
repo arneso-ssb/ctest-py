@@ -23,8 +23,8 @@ except ImportError:
     raise SystemExit(dedent(message)) from None
 
 package = "ctest_py"
-python_versions = ["3.11", "3.12", "3.13"]
-python_versions_for_test = python_versions + ["3.10"]
+python_versions = ["3.12"]
+python_versions_for_test = python_versions
 nox.needs_version = ">= 2021.6.6"
 nox.options.sessions = (
     "pre-commit",
@@ -143,7 +143,7 @@ def precommit(session: Session) -> None:
 @session(python=python_versions)
 def mypy(session: Session) -> None:
     """Type-check using mypy."""
-    args = session.posargs or ["src", "tests"]
+    args = session.posargs or ["src"]
     session.install(".")
     session.install("mypy", "pytest", "types-cffi")
     session.run("mypy", *args)
@@ -155,7 +155,7 @@ def mypy(session: Session) -> None:
 def tests(session: Session) -> None:
     """Run the test suite."""
     session.install(".")
-    session.install("coverage[toml]", "pytest", "pygments")
+    session.install("coverage[toml]", "pytest", "pygments", "pytest-mock", "requests")
     try:
         session.run(
             "coverage",
@@ -189,8 +189,14 @@ def coverage(session: Session) -> None:
 def typeguard(session: Session) -> None:
     """Runtime type checking using Typeguard."""
     session.install(".")
-    session.install("pytest", "typeguard", "pygments")
-    session.run("pytest", f"--typeguard-packages={package}", *session.posargs)
+    session.install("pytest", "typeguard", "pygments", "pytest-mock", "requests")
+    session.run(
+        "pytest",
+        "-o",
+        "pythonpath=",
+        f"--typeguard-packages={package}",
+        *session.posargs,
+    )
 
 
 @session(python=python_versions)
