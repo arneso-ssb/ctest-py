@@ -1,5 +1,5 @@
 [project]
-name = "ctest-py"
+name = "arneso-ctest-py"
 version = "0.0.0"
 description = "CTest Py"
 authors = [{ name = "Arne Sørli", email = "arne.sorli@ssb.no" }]
