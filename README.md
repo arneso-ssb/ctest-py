@@ -78,7 +78,7 @@ ctest -V
 cmake --install . --prefix ..
 ```
 
-If you geet errors about missing developement libraries for curl and openssh, you can
+If you get errors about missing developement libraries for curl and openssh, you can
 install them like this:
 
 ```shell
@@ -92,7 +92,7 @@ Build the complete library with the commands:
 
 ```shell
 poetry install
-poetry run python -m build
+poetry run pip install -e .  # Needed to generate _curlcrypto
 ```
 
 
