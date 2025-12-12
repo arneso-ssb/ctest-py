@@ -7,12 +7,69 @@ on:
   workflow_dispatch:
 
 jobs:
+  prepare-version:
+    name: Prepare Version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
+      is-tagged: ${{ steps.check-version.outputs.tag != '' }}
+      tag: ${{ steps.check-version.outputs.tag }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+
+      - name: Set up Python
+        uses: actions/setup-python@v6.1.0
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        run: |
+          pipx install --pip-args "-c ${{ github.workspace }}/.github/workflows/constraints.txt" poetry
+          pipx inject poetry poetry-plugin-export
+          poetry --version
+
+      - name: Check if there is a parent commit
+        id: check-parent-commit
+        run: |
+          echo "sha=$(git rev-parse --verify --quiet HEAD^)" >> $GITHUB_OUTPUT
+
+      - name: Detect and tag new version
+        id: check-version
+        if: steps.check-parent-commit.outputs.sha
+        uses: salsify/action-detect-and-tag-new-version@v2.0.3
+        with:
+          version-command: |
+            bash -o pipefail -c "poetry version | cut -f 2 -d' '"
+
+      - name: Get version for release
+        id: get-version
+        run: |
+          if [ -n "${{ steps.check-version.outputs.tag }}" ]; then
+            # Tagged release - use the version from pyproject.toml
+            version=$(poetry version | awk '{ print $2 }')
+          else
+            # Developmental release - bump and add dev suffix
+            poetry version patch
+            version=$(poetry version | awk '{ print $2 }')
+            version="${version}.dev.$(date +%s)"
+          fi
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "Determined version: $version"
+
   build-wheels:
+    needs: prepare-version
     uses: ./.github/workflows/build-wheels.yml
+    with:
+      version: ${{ needs.prepare-version.outputs.version }}
 
   release:
     name: Release
-    needs: build-wheels
+    needs: [prepare-version, build-wheels]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -40,25 +97,10 @@ jobs:
           pipx inject poetry poetry-plugin-export
           poetry --version
 
-      - name: Check if there is a parent commit
-        id: check-parent-commit
+      - name: Set version for sdist
         run: |
-          echo "sha=$(git rev-parse --verify --quiet HEAD^)" >> $GITHUB_OUTPUT
-
-      - name: Detect and tag new version
-        id: check-version
-        if: steps.check-parent-commit.outputs.sha
-        uses: salsify/action-detect-and-tag-new-version@v2.0.3
-        with:
-          version-command: |
-            bash -o pipefail -c "poetry version | cut -f 2 -d' '"
-
-      - name: Bump version for developmental release
-        if: (!steps.check-version.outputs.tag)
-        run: |
-          poetry version patch &&
-          version=$(poetry version | awk '{ print $2 }') &&
-          poetry version $version.dev.$(date +%s)
+          poetry version ${{ needs.prepare-version.outputs.version }}
+          echo "Building sdist with version: $(poetry version | awk '{ print $2 }')"
 
       - name: Build source distribution
         run: |
@@ -74,11 +116,11 @@ jobs:
         run: ls -la dist/
 
       - name: Publish package on PyPI
-        if: steps.check-version.outputs.tag
+        if: needs.prepare-version.outputs.is-tagged == 'true'
         uses: pypa/gh-action-pypi-publish@v1.13.0
 
       - name: Publish package on TestPyPI
-        if: (!steps.check-version.outputs.tag)
+        if: needs.prepare-version.outputs.is-tagged != 'true'
         uses: pypa/gh-action-pypi-publish@v1.13.0
         with:
           repository-url: https://test.pypi.org/legacy/
@@ -86,7 +128,7 @@ jobs:
       - name: Publish the release notes
         uses: release-drafter/release-drafter@v6.1.0
         with:
-          publish: ${{ steps.check-version.outputs.tag != '' }}
-          tag: ${{ steps.check-version.outputs.tag }}
+          publish: ${{ needs.prepare-version.outputs.is-tagged == 'true' }}
+          tag: ${{ needs.prepare-version.outputs.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
