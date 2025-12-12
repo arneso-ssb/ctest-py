@@ -165,5 +165,7 @@ packages = ["ctest_py"]
 requires = [
     "scikit-build-core>=0.11",
     "cffi>=2.0",
+    "cmake>=3.28",
+    "ninja>=1.13",
 ]
 build-backend = "scikit_build_core.build"
