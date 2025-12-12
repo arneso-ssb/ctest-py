@@ -4,11 +4,15 @@ on:
   push:
     branches:
       - main
-      - master
+  workflow_dispatch:
 
 jobs:
+  build-wheels:
+    uses: ./.github/workflows/build-wheels.yml
+
   release:
     name: Release
+    needs: build-wheels
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -29,12 +33,6 @@ jobs:
         run: |
           pip install -c ${{ github.workspace }}/.github/workflows/constraints.txt pip
           pip --version
-
-      - name: Install system packages (Ubuntu)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libcurl4-openssl-dev libssl-dev pkg-config
 
       - name: Install Poetry
         run: |
@@ -62,9 +60,18 @@ jobs:
           version=$(poetry version | awk '{ print $2 }') &&
           poetry version $version.dev.$(date +%s)
 
-      - name: Build package
+      - name: Build source distribution
         run: |
-          poetry build --ansi
+          poetry build --format sdist --ansi
+
+      - name: Download wheels
+        uses: actions/download-artifact@v4
+        with:
+          name: wheels-linux-x86_64
+          path: dist/
+
+      - name: List distribution files
+        run: ls -la dist/
 
       - name: Publish package on PyPI
         if: steps.check-version.outputs.tag

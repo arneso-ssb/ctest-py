@@ -1,18 +1,16 @@
 name: Build wheels
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
 
 jobs:
   build-wheels:
-    name: cibuildwheel linux x86_64 (cp311-cp313)
+    name: linux x86_64 (cp311-cp313)
     runs-on: ubuntu-latest
 
     steps:
