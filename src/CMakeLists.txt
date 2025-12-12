@@ -21,8 +21,8 @@ find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 
 # Architecture:
 # - cloudsqlite: Shared library (.so) for SQLite load_extension() - installed to package
-# - curlcrypto: Static library for CFFI bindings - linked into _curlcrypto extension
-# - _curlcrypto: Python extension module built from CFFI-generated C code
+# - curlcrypto: Static library (.a) for CFFI bindings - linked into _curlcrypto
+# - _curlcrypto: Python extension module built from CFFI-generated C code, includes curlcrypto
 
 # Install all Python package sources into the wheel via CMake
 # This ensures the pure-Python files are present alongside the compiled artifacts
@@ -69,8 +69,9 @@ install(TARGETS _curlcrypto
   RUNTIME DESTINATION ctest_py   # Windows
 )
 
+
 # Install the cloudsqlite shared library (SQLite extension) into the package directory
 install(TARGETS cloudsqlite
-  LIBRARY DESTINATION ctest_py   # Unix-like: cloudsqlite.so
+  LIBRARY DESTINATION ctest_py   # Unix-like: libcloudsqlite.so
   RUNTIME DESTINATION ctest_py   # Windows: cloudsqlite.dll
 )

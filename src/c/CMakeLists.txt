@@ -38,15 +38,13 @@ target_link_libraries(cloudsqlite
 # ------------------------------------------------------------------------------
 # curlcrypto: Static library for Python CFFI bindings
 # Contains only the CFFI interface code (curlcrypto.c)
+# Statically linked into the _curlcrypto Python extension module
 # ------------------------------------------------------------------------------
 add_library(curlcrypto STATIC
     src/curlcrypto.c
 )
 
-# Enable Position Independent Code for the static library
-# (required when embedding in a shared Python extension module)
 set_target_properties(curlcrypto PROPERTIES
-    POSITION_INDEPENDENT_CODE ON
     C_STANDARD 11
     C_STANDARD_REQUIRED ON
 )
@@ -57,14 +55,14 @@ target_include_directories(curlcrypto
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-# Link curlcrypto against cloudsqlite so CFFI can access the full functionality
 target_link_libraries(curlcrypto
-    PUBLIC
-        cloudsqlite
+    PRIVATE
         CURL::libcurl
         OpenSSL::SSL
         OpenSSL::Crypto
 )
+
+set_property(TARGET curlcrypto PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 # Optional: Define a C test executable
 if(BUILD_TESTING)
