@@ -70,7 +70,6 @@ class CloudSqlite:
                 further testing and implementation are required.
         """
         raise NotImplementedError("This method is not exposed yet")
-          
 
     @cache
     @staticmethod

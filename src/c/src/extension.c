@@ -44,20 +44,20 @@ int init_vfs(sqlite3 *db, char **pzErrMsg) {
         if (pzErrMsg) {
             *pzErrMsg = sqlite3_mprintf("Auth token (CS_KEY) environment variable not set.");
         }
-        return SQLITE_ERROR; 
+        return SQLITE_ERROR;
     }
 
     int rc = SQLITE_OK;
     sqlite3_bcvfs *pVfs_ = NULL;
 
-    // Use a local error message pointer for bcvfs calls 
-    char *localBcvfsErrMsg = NULL; 
+    // Use a local error message pointer for bcvfs calls
+    char *localBcvfsErrMsg = NULL;
 
     pVfs_ = (sqlite3_bcvfs *)sqlite3_vfs_find(VFS_NAME);
-    
+
     if (pVfs_ == NULL) {
         // Pass the address of the local error pointer
-        rc = sqlite3_bcvfs_create(CACHE_DIR, VFS_NAME, &pVfs_, &localBcvfsErrMsg); 
+        rc = sqlite3_bcvfs_create(CACHE_DIR, VFS_NAME, &pVfs_, &localBcvfsErrMsg);
     } else {
         // Cleanup the local error message pointer if it was set
         if (localBcvfsErrMsg != NULL) {
@@ -67,20 +67,20 @@ int init_vfs(sqlite3 *db, char **pzErrMsg) {
         }
         return SQLITE_OK;
     }
-    
 
-    if( rc==SQLITE_OK && pVfs_ != NULL ){ 
+
+    if( rc==SQLITE_OK && pVfs_ != NULL ){
         // ... (daemon checks and config calls are fine) ...
-        sqlite3_bcvfs_config(pVfs_, SQLITE_BCV_CURLVERBOSE, 0); 
-        
+        sqlite3_bcvfs_config(pVfs_, SQLITE_BCV_CURLVERBOSE, 0);
+
         if( rc==SQLITE_OK ){
             sqlite3_bcvfs_auth_callback(pVfs_, 0, csAuthCb);
         }
-        
+
         if( rc==SQLITE_OK ){
             // Pass the address of the local error pointer again
             rc = sqlite3_bcvfs_attach(pVfs_, CS_STORAGE, CS_ACCOUNT, DB_BUCKET, LOCAL_CONTAINER_ALIAS,
-                SQLITE_BCV_ATTACH_IFNOT, &localBcvfsErrMsg 
+                SQLITE_BCV_ATTACH_IFNOT, &localBcvfsErrMsg
             );
             // Check attach error
             if (rc != SQLITE_OK && localBcvfsErrMsg != NULL) {
@@ -92,20 +92,20 @@ int init_vfs(sqlite3 *db, char **pzErrMsg) {
         } else {
             printf("Could not register virtual table\n");
         }
-        
+
 
         sqlite3_vfs_register((sqlite3_vfs *)pVfs_, 0);
-        
+
 
     } else {
         printf("VFS creation failed with return code %d\n", rc);
     };
-    // Cleanup the local error message pointer if it was set 
+    // Cleanup the local error message pointer if it was set
     if (localBcvfsErrMsg != NULL) {
-        sqlite3_free(localBcvfsErrMsg); 
+        sqlite3_free(localBcvfsErrMsg);
     }
 
-    // If we return an error to SQLite, *we* need to set *pzErrMsg 
+    // If we return an error to SQLite, *we* need to set *pzErrMsg
     if (rc != SQLITE_OK && pzErrMsg != NULL) {
         *pzErrMsg = sqlite3_mprintf("init_vfs failed with generic error code: %d", rc);
     }
@@ -118,7 +118,7 @@ int sqlite3_extension_init(
   const sqlite3_api_routines *pApi
 ){
     SQLITE_EXTENSION_INIT2(pApi);
- 
+
     int rc = init_vfs(db, pzErrMsg);
 
     if( rc==SQLITE_OK ) rc = SQLITE_OK_LOAD_PERMANENTLY;
