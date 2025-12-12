@@ -45,15 +45,15 @@ class CloudSqlite:
         os.environ["SQ_VERBOSITY"] = "0"
 
         lib_path = os.path.abspath(__file__)
-        EXTENSION_PATH = os.path.dirname(lib_path) + "/exstension"
+        extension_path = os.path.dirname(lib_path) + "/libcurlcrypto.so"
         # Step 1: Load the extension using a temporary connection
         temp_conn = sqlite3.connect(":memory:")
         temp_conn.enable_load_extension(True)
 
         try:
             # The extension's entry point should register the 'myvfs' VFS persistently.
-            temp_conn.load_extension(EXTENSION_PATH)
-            print(f"Extension loaded successfully from {EXTENSION_PATH}")
+            temp_conn.load_extension(extension_path)
+            print(f"Extension loaded successfully from {extension_path}")
         except sqlite3.OperationalError as e:
             print(f"Failed to load extension: {e}")
             temp_conn.close()
