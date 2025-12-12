@@ -1,8 +1,10 @@
 find_package(CURL REQUIRED)
 find_package(OpenSSL REQUIRED)
 
-add_library(curlcrypto SHARED
-    src/curlcrypto.c
+# ------------------------------------------------------------------------------
+# cloudsqlite: Shared library for SQLite extension (loaded via load_extension())
+# ------------------------------------------------------------------------------
+add_library(cloudsqlite SHARED
     src/bcvencrypt.c
     src/bcvlog.c
     src/bcvmodule.c
@@ -15,25 +17,52 @@ add_library(curlcrypto SHARED
 #   src/tclsqlite.c
 )
 
-# Public include path (so other targets, e.g. Python extension or tests, can include this)
-target_include_directories(curlcrypto
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
-
-# Require C11 with GNU/POSIX extensions (needed for strdup, etc.)
-set_target_properties(curlcrypto PROPERTIES
+set_target_properties(cloudsqlite PROPERTIES
     C_STANDARD 11
     C_STANDARD_REQUIRED ON
     C_EXTENSIONS ON
 )
 
-target_link_libraries(curlcrypto
+target_include_directories(cloudsqlite
     PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+target_link_libraries(cloudsqlite
+    PRIVATE
         CURL::libcurl
         OpenSSL::SSL
         OpenSSL::Crypto
 )
+
+# ------------------------------------------------------------------------------
+# curlcrypto: Static library for Python CFFI bindings
+# Contains only the CFFI interface code (curlcrypto.c)
+# Statically linked into the _curlcrypto Python extension module
+# ------------------------------------------------------------------------------
+add_library(curlcrypto STATIC
+    src/curlcrypto.c
+)
+
+set_target_properties(curlcrypto PROPERTIES
+    C_STANDARD 11
+    C_STANDARD_REQUIRED ON
+)
+
+# Public include path (so Python extension can include headers)
+target_include_directories(curlcrypto
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+target_link_libraries(curlcrypto
+    PRIVATE
+        CURL::libcurl
+        OpenSSL::SSL
+        OpenSSL::Crypto
+)
+
+set_property(TARGET curlcrypto PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 # Optional: Define a C test executable
 if(BUILD_TESTING)

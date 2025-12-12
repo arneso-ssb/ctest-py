@@ -19,11 +19,10 @@ add_subdirectory(c)
 # Find Python for building a CPython extension module (_curlcrypto)
 find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 
-# Install the built C library into the Python package
-install(TARGETS curlcrypto
-    LIBRARY DESTINATION ctest_py
-    RUNTIME DESTINATION ctest_py
-)
+# Architecture:
+# - cloudsqlite: Shared library (.so) for SQLite load_extension() - installed to package
+# - curlcrypto: Static library (.a) for CFFI bindings - linked into _curlcrypto
+# - _curlcrypto: Python extension module built from CFFI-generated C code, includes curlcrypto
 
 # Install all Python package sources into the wheel via CMake
 # This ensures the pure-Python files are present alongside the compiled artifacts
@@ -64,21 +63,15 @@ target_include_directories(_curlcrypto PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/c/include
 )
 
-# Ensure at runtime the extension can find the sibling libcurlcrypto.* next to it
-if(APPLE)
-  set(_origin "@loader_path")
-elseif(UNIX)
-  set(_origin "$ORIGIN")
-endif()
-if(UNIX)
-  set_target_properties(_curlcrypto PROPERTIES
-    BUILD_RPATH "${_origin}"
-    INSTALL_RPATH "${_origin}"
-  )
-endif()
-
 # Install the Python extension into the package directory
 install(TARGETS _curlcrypto
   LIBRARY DESTINATION ctest_py   # Unix-like
   RUNTIME DESTINATION ctest_py   # Windows
+)
+
+
+# Install the cloudsqlite shared library (SQLite extension) into the package directory
+install(TARGETS cloudsqlite
+  LIBRARY DESTINATION ctest_py   # Unix-like: libcloudsqlite.so
+  RUNTIME DESTINATION ctest_py   # Windows: cloudsqlite.dll
 )
