@@ -55,7 +55,7 @@ jobs:
             python -c "import ctest_py; print(ctest_py.curl_version())"
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: wheels-linux-x86_64
           path: wheelhouse/*.whl
