@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v6.1.0
+        uses: actions/setup-python@v6.2.0
         with:
           python-version: "3.12"
 
@@ -35,7 +35,7 @@ jobs:
           grep '^version' pyproject.toml
 
       - name: Build wheels with cibuildwheel
-        uses: pypa/cibuildwheel@v3.3.0
+        uses: pypa/cibuildwheel@v3.3.1
         env:
           # Build only CPython 3.11–3.13 manylinux wheels for x86_64
           CIBW_BUILD: "cp311-manylinux_x86_64 cp312-manylinux_x86_64 cp313-manylinux_x86_64"
@@ -55,7 +55,7 @@ jobs:
             python -c "import ctest_py; print(ctest_py.curl_version())"
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: wheels-linux-x86_64
           path: wheelhouse/*.whl
